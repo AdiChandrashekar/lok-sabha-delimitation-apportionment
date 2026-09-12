@@ -3,8 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Who gets the seats — Lok Sabha apportionment</title>
-<meta name="description" content="Set the rules of Lok Sabha seat apportionment and see who gains and who loses. Six allocation methods, five censuses, official projections to 2036.">
+<title>Lok Sabha Delimitation Visualiser — who gets the seats</title>
+<meta name="description" content="Set the rules of Lok Sabha seat apportionment and see who gains and who loses. Seven allocation rules, five censuses, official projections to 2036, every figure traceable to source.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lok Sabha Delimitation Visualiser">
+<meta property="og:title" content="Lok Sabha Delimitation Visualiser">
+<meta property="og:description" content="Seats have been frozen on the 1971 Census since 1976. Unfreezing them is not one calculation with one answer. Set the rules yourself.">
+<meta property="og:image" content="assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lok Sabha Delimitation Visualiser">
+<meta name="twitter:description" content="Seven allocation rules disagree by dozens of seats. Choosing between them is a political choice wearing the costume of arithmetic.">
+<meta name="twitter:image" content="assets/social-card.png">
+<meta name="theme-color" content="#141a20">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/social-card.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -12,21 +32,38 @@
 <a class="skip" href="#controls">Skip to the controls</a>
 
 <header class="masthead">
-  <div class="wrap">
-    <p class="kicker">Constitutional arithmetic</p>
+  <div class="masthead-art" aria-hidden="true"><svg id="masthead-arc" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice"></svg></div>
+  <div class="wrap masthead-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 48 30" aria-hidden="true">
+        <g fill="currentColor">
+          <circle cx="24" cy="26" r="3.1"/>
+          <circle cx="10.4" cy="21.6" r="3.1"/><circle cx="37.6" cy="21.6" r="3.1"/>
+          <circle cx="4.6" cy="10.6" r="3.1"/><circle cx="43.4" cy="10.6" r="3.1"/>
+          <circle cx="15.3" cy="8.4" r="3.1"/><circle cx="32.7" cy="8.4" r="3.1"/>
+          <circle cx="24" cy="4.6" r="3.1"/>
+        </g>
+      </svg>
+      <p class="brand-name"><span>Lok Sabha</span> Delimitation Visualiser</p>
+    </div>
+
     <h1>Who gets the seats</h1>
     <p class="standfirst">
-      Lok Sabha seats have been frozen on the 1971 Census since 1976. Unfreezing them is
-      not one calculation with one answer. Proportional allocation can be implemented by
-      at least six established rules, they disagree by dozens of seats for large states,
-      and choosing between them is a political choice wearing the costume of arithmetic.
-      Set the rules yourself.
+      Lok Sabha seats have been frozen on the 1971 Census since 1976. Unfreezing
+      them is not one calculation with one answer. Proportional allocation can be
+      implemented by at least six established rules, they disagree by dozens of
+      seats for large states, and choosing between them is a political choice
+      wearing the costume of arithmetic. Set the rules yourself.
     </p>
     <p class="status" id="status-line">
       Status as at 13 September 2026. The Constitution (131st Amendment) Bill, 2026 was
       negatived in the Lok Sabha on 17 April 2026, 298 for against the 352 needed. The
       Delimitation Bill, 2026 and the Union Territories Laws (Amendment) Bill, 2026 fell
       the same day. No revised bill has been introduced.
+    </p>
+    <p class="masthead-links">
+      <a href="methods.html">The rules explained in depth</a>
+      <a href="methods.html#alabama">The Alabama paradox</a>
     </p>
   </div>
 </header>
@@ -130,23 +167,39 @@
     <div class="headline-grid" id="headline"></div>
   </section>
 
+  <!-- ------------------------------------------------- the chamber ---- -->
+  <section class="chamber-section">
+    <div class="section-head">
+      <h2>The chamber</h2>
+      <div class="viewtoggle" role="group" aria-label="Colour the chamber by">
+        <button type="button" class="seg is-on" data-bloc="group" aria-pressed="true">Analytical blocs</button>
+        <button type="button" class="seg" data-bloc="zonal" aria-pressed="false">Zonal councils</button>
+      </div>
+    </div>
+    <p class="section-note" id="chamber-note"></p>
+
+    <div class="chamber-wrap">
+      <div id="chamber" class="chamber"></div>
+      <div id="chamber-legend" class="chamber-legend"></div>
+    </div>
+    <div id="chamber-compare" class="chamber-compare"></div>
+  </section>
+
   <!-- ------------------------------------------------------------------ -->
   <section class="map-section">
     <div class="section-head">
       <h2>The map</h2>
       <div class="viewtoggle" role="group" aria-label="Colour the map by">
-        <button type="button" class="seg is-on" id="view-abs" aria-pressed="true">Seats gained or lost</button>
-        <button type="button" class="seg" id="view-prop" aria-pressed="false">Change as a share of current</button>
+        <button type="button" class="seg is-on" data-view="weight" aria-pressed="true">What a vote is worth</button>
+        <button type="button" class="seg" data-view="abs" aria-pressed="false">Seats gained or lost</button>
+        <button type="button" class="seg" data-view="prop" aria-pressed="false">Change against current</button>
       </div>
     </div>
-    <p class="section-note" id="view-note">
-      Absolute change. Big states dominate because the numbers are bigger. Switch to
-      proportional change to see what happens to small states.
-    </p>
+    <p class="section-note" id="view-note"></p>
 
     <div class="map-layout">
       <figure class="map-figure">
-        <div id="map" role="group" aria-label="Choropleth of India by seat change. Each state is focusable."></div>
+        <div id="map" role="group" aria-label="Choropleth of India. Each state is focusable."></div>
         <figcaption id="map-legend" class="legend"></figcaption>
       </figure>
 
@@ -210,6 +263,13 @@
   <section class="prose" id="methodology">
     <h2>Methodology</h2>
 
+    <p class="lede">
+      This is the short version. <a href="methods.html">The rules explained in depth</a>
+      works through each method with a small worked example, and sets out
+      <a href="methods.html#alabama">why the Alabama paradox happens</a> rather than
+      only that it does.
+    </p>
+
     <h3>What the tool does</h3>
     <p>
       It takes a population figure for each of India's 36 states and union territories,
@@ -239,6 +299,7 @@
       so this is a property of the rule and the data rather than of our code. The divisor
       methods — Huntington-Hill, Sainte-Laguë, D'Hondt — produce no instances at all.
       Cube root and base-plus-proportional do, because both distribute by largest remainder.
+      <a href="methods.html#alabama">The full explanation, with a worked example.</a>
     </p>
 
     <h3>Quota</h3>
@@ -265,16 +326,16 @@
           that is today's map. For Andhra Pradesh and Telangana it is not: the seven
           Khammam mandals transferred in 2014 sit inside the historical Telangana figures.
           The effect is 190,304 people in 2011 and smaller amounts earlier.</li>
-      <li>Regional groupings drive one panel and are <strong>not official</strong>.</li>
+      <li>Regional groupings drive one panel and are <strong>not official</strong>. Zonal
+          councils, used to colour the chamber, are official.</li>
       <li>These are seat totals per state. Nothing here says anything about
           constituency boundaries <em>within</em> a state, which is the other half of
           what a Delimitation Commission does.</li>
     </ul>
     <p>
       Fuller detail than this page carries is in
-      <a href="METHODOLOGY.md">METHODOLOGY.md</a> — every rule, the paradoxes, the
-      constraint handling and the limits — and the repository carries the raw
-      sources unmodified, so every transformation can be re-run and checked.
+      <a href="METHODOLOGY.md">METHODOLOGY.md</a>, and the repository carries the raw
+      sources unmodified so every transformation can be re-run and checked.
     </p>
   </section>
 
@@ -298,6 +359,7 @@
 
 <footer class="footer">
   <div class="wrap">
+    <p class="footer-brand">Lok Sabha Delimitation Visualiser</p>
     <p id="footer-note"></p>
   </div>
 </footer>

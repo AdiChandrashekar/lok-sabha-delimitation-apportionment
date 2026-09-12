@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The rules explained — Lok Sabha Delimitation Visualiser</title>
+<meta name="description" content="How each apportionment rule works, why they disagree, and why the Alabama paradox happens — with worked examples you can step through.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The apportionment rules, explained">
+<meta property="og:description" content="How each rule works, why they disagree, and why the Alabama paradox happens — with worked examples.">
+<meta property="og:image" content="assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="assets/social-card.png">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="doc-body">
+
+<a class="skip" href="#start">Skip to the article</a>
+
+<header class="doc-masthead">
+  <div class="wrap">
+    <a class="doc-back" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 48 30" aria-hidden="true">
+        <g fill="currentColor">
+          <circle cx="24" cy="26" r="3.1"/>
+          <circle cx="10.4" cy="21.6" r="3.1"/><circle cx="37.6" cy="21.6" r="3.1"/>
+          <circle cx="4.6" cy="10.6" r="3.1"/><circle cx="43.4" cy="10.6" r="3.1"/>
+          <circle cx="15.3" cy="8.4" r="3.1"/><circle cx="32.7" cy="8.4" r="3.1"/>
+          <circle cx="24" cy="4.6" r="3.1"/>
+        </g>
+      </svg>
+      <span><span class="bn">Lok Sabha</span> Delimitation Visualiser</span>
+    </a>
+  </div>
+</header>
+
+<div class="doc-layout wrap">
+
+  <nav class="doc-nav" aria-label="Contents">
+    <p class="doc-nav-head">Contents</p>
+    <ol>
+      <li><a href="#problem">The apportionment problem</a></li>
+      <li><a href="#quota">Quota, and the two families</a></li>
+      <li><a href="#hamilton">Largest remainder</a></li>
+      <li><a href="#divisor">The divisor methods</a>
+        <ol>
+          <li><a href="#dhondt">D'Hondt</a></li>
+          <li><a href="#sainte">Sainte-Laguë</a></li>
+          <li><a href="#huntington">Huntington-Hill</a></li>
+        </ol>
+      </li>
+      <li><a href="#others">Cube root and base-plus</a></li>
+      <li><a href="#alabama">The Alabama paradox</a></li>
+      <li><a href="#other-paradoxes">The other two paradoxes</a></li>
+      <li><a href="#balinski">Why you cannot win</a></li>
+      <li><a href="#india">What this means for India</a></li>
+      <li><a href="#reading">Further reading</a></li>
+    </ol>
+  </nav>
+
+  <main class="doc" id="start">
+
+    <p class="doc-kicker">Reference</p>
+    <h1>The rules, explained</h1>
+    <p class="doc-lede">
+      Six ways of turning populations into whole numbers of seats, why they
+      disagree, and why the one every published projection uses can take a seat
+      away from a state when the house gets bigger.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="problem">1. The apportionment problem</h2>
+
+    <p>
+      You have a house of <em>H</em> seats and a set of states with populations
+      <em>p₁ … pₙ</em>. You want each state's share of the seats to match its
+      share of the population. The difficulty is that seats are whole numbers and
+      shares are not.
+    </p>
+    <p>
+      State <em>i</em>'s <strong>exact entitlement</strong> — its
+      <em>quota</em> — is
+    </p>
+    <p class="formula">qᵢ = H × pᵢ / P&nbsp;&nbsp;&nbsp;where P is the total population</p>
+    <p>
+      If every <em>qᵢ</em> happened to be a whole number the problem would not
+      exist. They never are. Tamil Nadu's exact entitlement at a house of 543 on
+      the 2011 Census is 32.35 seats. It cannot have 0.35 of an MP, so somebody
+      has to decide whether it gets 32 or 33 — and whoever gains the seat Tamil
+      Nadu does not get is a different state entirely.
+    </p>
+    <p>
+      <strong>Every method below is a different answer to "who gets the
+      fraction".</strong> That is the whole of it. They are not competing
+      approximations to a single right answer, because there is no single right
+      answer; they are competing definitions of what fairness means when the
+      thing you are dividing cannot be divided.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="quota">2. Quota, and the two families</h2>
+
+    <p>
+      A method <strong>satisfies quota</strong> if every state always receives
+      either ⌊qᵢ⌋ or ⌈qᵢ⌉ — the whole number just below its exact entitlement, or
+      the one just above. Nothing else. Tamil Nadu at 32.35 gets 32 or 33, never
+      31 and never 34.
+    </p>
+    <p>That sounds like an obvious requirement. It is not free, as §8 shows.</p>
+    <p>Apportionment rules fall into two families:</p>
+    <div class="doc-cols">
+      <div class="doc-col">
+        <h4>Quota methods</h4>
+        <p>
+          Compute the exact entitlements, round them all down, then hand out the
+          leftover seats by some rule. <em>Largest remainder</em> is the only one
+          in common use. Satisfies quota by construction. Suffers paradoxes.
+        </p>
+      </div>
+      <div class="doc-col">
+        <h4>Divisor methods</h4>
+        <p>
+          Award seats one at a time, each to whichever state currently has the
+          strongest claim, where "strongest claim" is population divided by some
+          function of the seats it already holds. Free of paradoxes. Can violate
+          quota.
+        </p>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="hamilton">3. Largest remainder (Hamilton's method, Hare quota)</h2>
+
+    <p>
+      The rule behind essentially every published delimitation projection,
+      including the PRS table this site validates against.
+    </p>
+    <ol class="doc-steps">
+      <li>Work out the <em>quota</em>: total population ÷ house size. This is how many people one seat "costs".</li>
+      <li>Divide each state's population by the quota. That is its exact entitlement.</li>
+      <li>Give every state the whole-number part, rounded <strong>down</strong>.</li>
+      <li>You will now be a few seats short. Hand those out, one each, to the states with the largest fractional remainders.</li>
+    </ol>
+    <p>
+      It is transparent, it is easy to check by hand, and it never violates
+      quota. It is also the only rule here that can produce the paradox in §6.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="divisor">4. The divisor methods</h2>
+
+    <p>
+      A different idea entirely. Instead of computing entitlements and rounding,
+      hand out the seats <strong>one at a time</strong>. Before each seat, ask
+      every state: what is your claim? Give the seat to the strongest claim, then
+      ask again.
+    </p>
+    <p>A state's claim, when it already holds <em>n</em> seats, is</p>
+    <p class="formula">priority = pᵢ / d(n)</p>
+    <p>
+      Every divisor method is the same algorithm with a different
+      <em>d(n)</em>. That one function is the entire difference between them, and
+      it is the axis that decides how much small states are favoured.
+    </p>
+
+    <div class="doc-table-wrap">
+      <table class="doc-table">
+        <thead><tr><th>Method</th><th>d(n)</th><th>Divisor sequence</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>D'Hondt (Jefferson)</td><td>n + 1</td><td>1, 2, 3, 4, 5…</td><td>Favours large states</td></tr>
+          <tr><td>Sainte-Laguë (Webster)</td><td>2n + 1</td><td>1, 3, 5, 7, 9…</td><td>Close to neutral</td></tr>
+          <tr><td>Huntington-Hill</td><td>√(n(n+1))</td><td>0, 1.41, 2.45, 3.46…</td><td>Mildly favours small states</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="dhondt">D'Hondt</h3>
+    <p>
+      Divide by 1, 2, 3, 4… A state holding 10 seats has its population divided
+      by 11 to compete for its eleventh. Because the divisor grows slowly
+      relative to the seat count, a large state's claim stays strong for longer,
+      so <strong>D'Hondt systematically favours large states</strong>. It is
+      equivalent to rounding entitlements <em>down</em> and adjusting the quota
+      until the total fits.
+    </p>
+
+    <h3 id="sainte">Sainte-Laguë</h3>
+    <p>
+      Divide by 1, 3, 5, 7… The odd divisors correspond to rounding at the
+      halfway point: a state with an entitlement of 4.5 rounds to 5, one with 4.4
+      rounds to 4. This makes it <strong>the least biased of the divisor
+      methods</strong> by most measures, and it is the usual recommendation of
+      people who study the problem for a living.
+    </p>
+
+    <h3 id="huntington">Huntington-Hill</h3>
+    <p>
+      Divide by the <em>geometric</em> mean √(n(n+1)) rather than an arithmetic
+      one. Used for the United States House of Representatives since 1941.
+    </p>
+    <p>
+      Note that d(0) = 0, which would make the first seat's priority infinite, so
+      every state is seeded with one seat before the method starts. That is not a
+      quirk — it encodes a constitutional requirement that every state gets at
+      least one representative, and it is why the method is described as
+      favouring small states.
+    </p>
+    <p>
+      The geometric mean means the method equalises <em>relative</em> differences
+      in representation rather than absolute ones. Moving a seat is justified
+      only if it reduces the percentage difference between two states' people-per-seat.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="others">5. Cube root, and base-plus-proportional</h2>
+
+    <h3>Cube root of population</h3>
+    <p>
+      Not a rounding rule at all: a decision that seats should be proportional to
+      the <em>cube root</em> of population rather than to population. It comes
+      from the observation that assembly sizes around the world track roughly the
+      cube root of national population — the "cube root law".
+    </p>
+    <p>
+      It compresses the range hard. A state four times larger than another gets
+      about 1.6 times the seats, not four times. It violates quota almost
+      everywhere, which is expected: it is not trying to be proportional to
+      population, so the quota it violates is not the quota it is aiming at.
+    </p>
+
+    <h3>Base seats plus proportional</h3>
+    <p>
+      Every state gets a fixed base — two seats, say — and the rest of the house
+      is distributed in proportion to population. This is the shape of the
+      <em>Cambridge Compromise</em>, proposed for the European Parliament, where
+      it is described as "degressive proportionality": smaller states are
+      deliberately over-represented, and the base controls by how much.
+    </p>
+    <p>
+      The base is the whole argument. A base of one is nearly pure
+      proportionality; a base of ten would give Sikkim and Uttar Pradesh far more
+      similar weight than population alone ever would.
+    </p>
+
+    <h3>Uniform scaling <span class="doc-tag">not a rule</span></h3>
+    <p>
+      Included on the main page because it was reportedly offered during the
+      April 2026 debate, not because it is an apportionment method. It allocates
+      in proportion to each state's <em>current</em> seats, so every state's share
+      is preserved exactly and the house simply gets bigger. It resolves nothing
+      about representation — which is precisely the point worth being able to
+      see rather than being told.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="alabama">6. The Alabama paradox</h2>
+
+    <p class="doc-callout">
+      Under largest remainder, a state can <strong>lose</strong> a seat when the
+      house <strong>grows</strong>. Nothing about that state changes. No
+      population moves. The house simply gets bigger, and the state gets smaller.
+    </p>
+
+    <p>
+      It is named for what happened in the United States in 1881. The Census
+      Bureau computed apportionments for every house size from 275 to 350 and
+      noticed that Alabama got 8 seats at a house of 299 and 7 at a house of 300.
+      The same thing hit Maine in 1901, oscillating between 3 and 4 seats across
+      a range of house sizes, which the chairman of the committee used to
+      considerable rhetorical effect.
+    </p>
+
+    <h3>Why it happens</h3>
+    <p>
+      Watch what growing the house does to each state's exact entitlement. When
+      <em>H</em> increases by one, state <em>i</em>'s entitlement increases by
+    </p>
+    <p class="formula">Δqᵢ = pᵢ / P</p>
+    <p>
+      <strong>Large states' entitlements grow faster than small states'.</strong>
+      That is not controversial — it is what proportionality means. But largest
+      remainder does not allocate on entitlements, it allocates on the
+      <em>fractional part</em> of entitlements, and fractional parts wrap around.
+    </p>
+    <p>
+      A large state's fraction climbs quickly, crosses 1, and resets to near
+      zero. A small state's fraction creeps up slowly. Most of the time this is
+      harmless. But at the moment two large states' fractions both climb past a
+      small state's slowly-creeping fraction, the small state loses its place in
+      the remainder queue — and with it, the seat it was holding only because it
+      was near the front of that queue.
+    </p>
+
+    <h3>Watch it happen</h3>
+    <p>
+      Three states. A and B have 6 units of population each; C has 2. Drag the
+      house size between 10 and 11 and watch C.
+    </p>
+
+    <div class="demo" id="alabama-demo">
+      <div class="demo-controls">
+        <label for="demo-h">House size</label>
+        <input type="range" id="demo-h" min="9" max="16" step="1" value="10">
+        <output id="demo-h-out">10</output>
+      </div>
+      <div class="demo-table-wrap"><table class="demo-table" id="demo-table"></table></div>
+      <p class="demo-note" id="demo-note"></p>
+    </div>
+
+    <p>
+      At a house of 10 the quota is 1.4. C's entitlement is 1.43, a fraction of
+      0.43, which is the largest in the room — so C takes the single leftover
+      seat and finishes with 2.
+    </p>
+    <p>
+      At a house of 11 the quota falls to 1.27. Now A and B are each entitled to
+      4.71, a fraction of 0.71, while C is entitled to 1.57, a fraction of 0.57.
+      There are two leftover seats and A and B are ahead of C for both.
+      <strong>C drops to 1.</strong> The house grew by a seat and C lost one.
+    </p>
+
+    <h3>It is not a historical curiosity</h3>
+    <p>
+      On India's 2011 Census, running largest remainder across house sizes from
+      543 to 900 produces <strong>32 instances</strong> of a state losing a seat
+      as the house grows. Uttarakhand falls from 5 seats to 4 at a house of
+      <strong>548</strong> — and 548 is itself the total of the published
+      unchanged-strength column in the PRS annexure. Odisha falls from 21 to 20
+      at 595.
+    </p>
+    <p>
+      <a href="index.html#methodology">The main page lists every instance</a>,
+      recomputed live from whichever population series you have selected.
+    </p>
+    <p class="doc-fine">
+      This is verified independently in exact integer arithmetic — BigInt
+      division with no floating point anywhere — so it is a property of the rule
+      and the data, not an artefact of the code. Cube root and
+      base-plus-proportional exhibit it too, because both distribute leftovers by
+      largest remainder. The divisor methods produce none at all, ever: awarding
+      seats one at a time in priority order means a larger house can only ever
+      add to what a state already has.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="other-paradoxes">7. The other two paradoxes</h2>
+
+    <h3>The population paradox</h3>
+    <p>
+      State A grows faster than state B — and A loses a seat to B. Largest
+      remainder can do this for the same reason it produces the Alabama paradox:
+      the remainder queue can reorder in ways that do not track the direction
+      anyone moved in.
+    </p>
+    <p>
+      For a delimitation exercise this is arguably the more alarming of the two,
+      because population growth rates between Indian states differ enormously and
+      are the entire subject of the argument.
+    </p>
+
+    <h3>The new states paradox</h3>
+    <p>
+      Add a new state, give it exactly the number of seats its own population
+      warrants, expand the house by exactly that many — and the allocation
+      between the <em>existing</em> states changes. This happened when Oklahoma
+      joined the United States in 1907: Oklahoma took its 5 seats, and New York
+      lost one to Maine.
+    </p>
+    <p>
+      India creates and reorganises states regularly. Telangana in 2014, the
+      Jammu &amp; Kashmir reorganisation in 2019, three new states in 2000.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="balinski">8. Why you cannot simply pick a better rule</h2>
+
+    <p class="doc-callout">
+      <strong>Balinski and Young, 1982.</strong> No apportionment method can both
+      satisfy quota and be free of the population paradox. Any method that always
+      stays within quota must sometimes produce a paradox; any method free of
+      paradoxes must sometimes fall outside quota.
+    </p>
+
+    <p>
+      This is a theorem, not an engineering limitation. It is not waiting for a
+      cleverer algorithm. The two properties are genuinely incompatible for any
+      method dealing with four or more states.
+    </p>
+    <p>
+      So the choice between the families is not between a right answer and a
+      wrong one. It is a choice about <strong>which failure you would rather
+      live with</strong>:
+    </p>
+    <ul>
+      <li>
+        <strong>Largest remainder</strong> guarantees that no state is ever more
+        than one seat away from its exact entitlement — and in exchange, accepts
+        that the allocation can move in directions nobody intended.
+      </li>
+      <li>
+        <strong>Divisor methods</strong> guarantee that growth is always
+        monotone and that nobody is punished for a change they did not make — and
+        in exchange, accept that a state can occasionally end up further from its
+        exact entitlement than rounding would allow.
+      </li>
+    </ul>
+    <p>
+      Balinski and Young's own recommendation, on the evidence in <cite>Fair
+      Representation</cite>, is Sainte-Laguë: of the divisor methods it is the
+      least biased by size, and quota violations under it are rare.
+    </p>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="india">9. What this means for the Indian debate</h2>
+
+    <p>
+      Almost every published treatment of delimitation reports one rule's output
+      as though it were <em>the</em> number of seats each state would get. It is
+      not. It is largest remainder's answer, and largest remainder is a choice
+      with known, documented defects that nobody in the debate appears to have
+      raised.
+    </p>
+    <p>
+      Three consequences worth carrying into any argument about this:
+    </p>
+    <ol class="doc-steps">
+      <li>
+        <strong>The rule is worth dozens of seats.</strong> Switch between
+        methods on the main page at a fixed house size and watch large states
+        move by several seats each. The rule is not a technical detail beneath
+        the politics; it is one of the politics.
+      </li>
+      <li>
+        <strong>The published figure sits on a paradox.</strong> 548 — the total
+        of the unchanged-strength column — is a house size at which largest
+        remainder takes a seat away from Uttarakhand that it holds at 547.
+      </li>
+      <li>
+        <strong>Constraints decide more than rules do.</strong> Cap every state
+        at two seats of movement and the south ends up with more seats than it
+        holds today, whichever rule you pick. The argument about method may
+        matter less than the argument about transition.
+      </li>
+    </ol>
+
+    <!-- ------------------------------------------------------------- -->
+    <h2 id="reading">10. Further reading</h2>
+    <ul class="doc-reading">
+      <li>
+        <b>Michel Balinski and H. Peyton Young</b>, <cite>Fair Representation:
+        Meeting the Ideal of One Man, One Vote</cite> (Yale, 1982; 2nd ed.
+        Brookings, 2001). The standard work. The impossibility theorem in §8 is
+        theirs, and the historical material on Alabama and Oklahoma comes from it.
+      </li>
+      <li>
+        <b>The Cambridge Compromise</b> (2011), the report of the mathematicians'
+        meeting convened for the European Parliament, which sets out the
+        base-plus-proportional approach and the idea of degressive proportionality.
+      </li>
+      <li>
+        <b>Report of the Technical Group on Population Projections</b>, National
+        Commission on Population, 2020 — the source of the projected series on
+        the main page.
+      </li>
+      <li>
+        <b>PRS Legislative Research</b>, the Delimitation Bills of 2026 —
+        legislative summaries and the projection table used here as a validation
+        fixture.
+      </li>
+    </ul>
+
+    <p class="doc-foot">
+      <a href="index.html">← Back to the visualiser</a> ·
+      <a href="METHODOLOGY.md">Methodology</a> ·
+      <a href="SOURCES.md">Sources</a>
+    </p>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="wrap">
+    <p class="footer-brand">Lok Sabha Delimitation Visualiser</p>
+    <p>Code MIT licensed. Every figure traces to a named source recorded in the data files.</p>
+  </div>
+</footer>
+
+<script type="module">
+/* The worked example from §6, live. Deliberately self-contained: it uses the
+   toy three-state case rather than the real data, because the point is to show
+   the mechanism clearly, and 36 states obscure it. */
+const POPS = [["A", 6], ["B", 6], ["C", 2]];
+const P = POPS.reduce((s, [, p]) => s + p, 0);
+
+function allocate(H) {
+  const quota = P / H;
+  const rows = POPS.map(([name, p]) => {
+    const exact = p / quota;
+    return { name, p, exact, base: Math.floor(exact), frac: exact - Math.floor(exact) };
+  });
+  let left = H - rows.reduce((s, r) => s + r.base, 0);
+  const queue = [...rows].sort((a, b) => b.frac - a.frac || (a.name < b.name ? -1 : 1));
+  const got = new Set();
+  for (let i = 0; i < left; i++) { queue[i].base += 1; got.add(queue[i].name); }
+  return { quota, rows, got };
+}
+
+const el = id => document.getElementById(id);
+function draw(H) {
+  const { quota, rows, got } = allocate(H);
+  const prev = H > 9 ? allocate(H - 1) : null;
+  el("demo-h-out").textContent = H;
+  el("demo-table").innerHTML =
+    `<thead><tr><th>State</th><th>Population</th><th>Exact entitlement</th>
+      <th>Rounded down</th><th>Fraction</th><th>Seats</th></tr></thead><tbody>` +
+    rows.map(r => {
+      const before = prev ? prev.rows.find(x => x.name === r.name).base : null;
+      const fell = before != null && r.base < before;
+      return `<tr class="${fell ? "is-fall" : ""}">
+        <th>${r.name}</th><td>${r.p}</td><td>${r.exact.toFixed(3)}</td>
+        <td>${Math.floor(r.exact)}</td>
+        <td>${r.frac.toFixed(3)}${got.has(r.name) ? ' <span class="tick">+1</span>' : ""}</td>
+        <td class="seats">${r.base}${fell ? ' <span class="fall">▼</span>' : ""}</td>
+      </tr>`;
+    }).join("") + `</tbody>`;
+
+  const fallen = prev ? rows.filter(r => r.base < prev.rows.find(x => x.name === r.name).base) : [];
+  el("demo-note").innerHTML = `Quota is ${P} ÷ ${H} = <b>${quota.toFixed(3)}</b>. ` +
+    (fallen.length
+      ? `<span class="warn">State ${fallen.map(f => f.name).join(" and ")} just LOST a seat
+         while the house grew from ${H - 1} to ${H}.</span>`
+      : `Seats sum to ${rows.reduce((s, r) => s + r.base, 0)}.`);
+}
+
+el("demo-h").addEventListener("input", e => draw(Number(e.target.value)));
+draw(10);
+</script>
+</body>
+</html>

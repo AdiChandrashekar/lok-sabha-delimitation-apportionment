@@ -5,17 +5,23 @@
    to someone in an argument. That is what the tool is for.
 --------------------------------------------------------------------------- */
 import { allocate, METHODS, quotaViolations } from "./apportion.js";
-import { loadAll, buildRows, groupTotals, fmt, YEAR_LABELS, YEAR_NOTES, GROUP_LABELS } from "./data.js";
-import { createMap, renderLegend } from "./map.js";
+import { loadAll, buildRows, groupTotals, fmt,
+         YEAR_LABELS, YEAR_NOTES, GROUP_LABELS, ZONE_LABELS, BLOC_COLOURS } from "./data.js";
+import { createMap, renderLegend, MODES } from "./map.js";
 import { renderBlocks } from "./blocks.js";
 import { renderShares, renderMembership, renderVoteWeight, renderTable, toCSV } from "./panels.js";
+import { layout, buildBlocs, render as drawChamber } from "./hemicycle.js";
 
 const $ = id => document.getElementById(id);
 
 const DEFAULTS = {
   house: 543, method: "hare", year: "2011", base: 2,
   protectAll: false, protectSmall: false, threshold: 6000000,
-  maxChange: null, view: "abs",
+  maxChange: null,
+  /* Vote weight is the default map view. Seat counts are the mechanism, but
+     what a vote is worth is the thing the mechanism is for. */
+  view: "weight",
+  bloc: "group",
 };
 
 /* Presets encode arguments, so each carries a caption saying what it shows. */
@@ -42,7 +48,7 @@ let D = null, state = { ...DEFAULTS }, mapApi = null, hovered = null, lastRows =
 function readURL() {
   const q = new URLSearchParams(location.search);
   const num = (k, d) => { const v = Number(q.get(k)); return Number.isFinite(v) && q.has(k) ? v : d; };
-  const s = {
+  return {
     house: Math.min(1100, Math.max(400, Math.round(num("h", DEFAULTS.house)))),
     method: METHODS[q.get("m")] ? q.get("m") : DEFAULTS.method,
     year: q.get("y") && YEAR_LABELS[q.get("y")] ? q.get("y") : DEFAULTS.year,
@@ -51,9 +57,9 @@ function readURL() {
     protectSmall: q.get("ps") === "1",
     threshold: Math.max(0, Math.round(num("st", DEFAULTS.threshold))),
     maxChange: q.has("mc") ? Math.max(0, Math.round(num("mc", 5))) : null,
-    view: q.get("v") === "prop" ? "prop" : "abs",
+    view: MODES[q.get("v")] ? q.get("v") : DEFAULTS.view,
+    bloc: q.get("bl") === "zonal" ? "zonal" : DEFAULTS.bloc,
   };
-  return s;
 }
 
 function writeURL(replace = true) {
@@ -66,8 +72,9 @@ function writeURL(replace = true) {
   if (state.protectSmall) { q.set("ps", "1"); if (state.threshold !== DEFAULTS.threshold) q.set("st", state.threshold); }
   if (state.maxChange != null) q.set("mc", state.maxChange);
   if (state.view !== DEFAULTS.view) q.set("v", state.view);
-  const url = location.pathname + (q.toString() ? "?" + q : "");
-  history[replace ? "replaceState" : "pushState"](null, "", url);
+  if (state.bloc !== DEFAULTS.bloc) q.set("bl", state.bloc);
+  history[replace ? "replaceState" : "pushState"](null, "",
+    location.pathname + (q.toString() ? "?" + q : ""));
 }
 
 /* ------------------------------------------------------------------ controls */
@@ -89,13 +96,22 @@ function syncControls() {
 
   $("method-note").textContent = METHODS[state.method].note;
   $("year-note").textContent = YEAR_NOTES[state.year] ?? "";
-  $("view-abs").classList.toggle("is-on", state.view === "abs");
-  $("view-prop").classList.toggle("is-on", state.view === "prop");
-  $("view-abs").setAttribute("aria-pressed", state.view === "abs");
-  $("view-prop").setAttribute("aria-pressed", state.view === "prop");
-  $("view-note").textContent = state.view === "abs"
-    ? "Absolute change. Big states dominate because the numbers are bigger. Switch to proportional change to see what happens to small states."
-    : "Change as a share of what the state holds today. A small state losing one of two seats is a 50% cut, which the absolute view hides entirely.";
+
+  document.querySelectorAll("[data-view]").forEach(b => {
+    const on = b.dataset.view === state.view;
+    b.classList.toggle("is-on", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
+  $("view-note").textContent = MODES[state.view].note;
+
+  document.querySelectorAll("[data-bloc]").forEach(b => {
+    const on = b.dataset.bloc === state.bloc;
+    b.classList.toggle("is-on", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
+  $("chamber-note").textContent = state.bloc === "zonal"
+    ? "Coloured by zonal council, which is an official grouping under the States Reorganisation Act 1956 and the North Eastern Council Act 1971. Each dot is one seat."
+    : "Coloured by the analytical grouping used elsewhere on this page, which is NOT official. Each dot is one seat, and the blocs sit in contiguous wedges as they would in a chamber.";
 
   const active = PRESETS.find(p => matchesPreset(p));
   document.querySelectorAll(".preset").forEach(b =>
@@ -149,10 +165,7 @@ function renderAlerts(result) {
 
   el.innerHTML = bits.join("");
   el.querySelectorAll("[data-fix-house]").forEach(b =>
-    b.addEventListener("click", () => {
-      state.house = Number(b.dataset.fixHouse);
-      apply();
-    }));
+    b.addEventListener("click", () => { state.house = Number(b.dataset.fixHouse); apply(); }));
 }
 
 /* ------------------------------------------------------------------ headline */
@@ -164,6 +177,7 @@ function renderHeadline(rows, result) {
   const biggestUp = [...live].sort((a, b) => b.change - a.change)[0];
   const biggestDown = [...live].sort((a, b) => a.change - b.change)[0];
   const southDelta = g.south.seats - g.south.current;
+  const houseTotal = live.reduce((a, r) => a + r.seats, 0) || 1;
 
   const stat = (k, v, s, cls = "") =>
     `<div class="stat"><p class="k">${k}</p><p class="v ${cls}">${v}</p><p class="s">${s}</p></div>`;
@@ -171,51 +185,99 @@ function renderHeadline(rows, result) {
   $("headline").innerHTML = [
     stat("Units that move", `${movers.length}`, `of ${live.length} allocated${result.absent.length ? `, ${result.absent.length} absent` : ""}`),
     stat("Seats redistributed", `${gained}`, movers.length ? "changing hands" : "nothing moves at all"),
-    stat("South", fmt.d(southDelta), `${g.south.seats} seats, ${fmt.share(g.south.seats / (live.reduce((a, r) => a + r.seats, 0) || 1))} of the house`,
+    stat("South", fmt.d(southDelta), `${g.south.seats} seats, ${fmt.share(g.south.seats / houseTotal)} of the house`,
       southDelta > 0 ? "up" : southDelta < 0 ? "down" : ""),
     stat("Biggest gain", `${biggestUp.code} ${fmt.d(biggestUp.change)}`, biggestUp.name, biggestUp.change > 0 ? "up" : ""),
     stat("Biggest loss", `${biggestDown.code} ${fmt.d(biggestDown.change)}`, biggestDown.name, biggestDown.change < 0 ? "down" : ""),
   ].join("");
 }
 
+/* ------------------------------------------------------------------ chamber */
+function labelFor(id) {
+  return GROUP_LABELS[id] ?? ZONE_LABELS[id] ?? id;
+}
+
+function renderChamber(rows) {
+  const blocs = buildBlocs(rows, state.bloc, BLOC_COLOURS)
+    .map(b => ({ ...b, label: labelFor(b.id) }));
+  const total = blocs.reduce((a, b) => a + b.seats, 0);
+
+  drawChamber($("chamber"), layout(total), blocs, {
+    width: 820,
+    label: total === 1 ? "seat" : "seats",
+    sublabel: state.house === 543 ? "the house as it stands" : `against ${543} today`,
+  });
+
+  /* The legend doubles as the numbers panel: share now, share under these
+     rules, and the movement between them. */
+  $("chamber-legend").innerHTML = blocs.map(b => {
+    const now = b.units.reduce((a, r) => a + r.current, 0);
+    const nowShare = now / 543, share = b.seats / total;
+    const d = share - nowShare;
+    return `<div class="cl-row">
+      <span class="cl-dot" style="background:${b.colour}"></span>
+      <span class="cl-name">${b.label}</span>
+      <span class="cl-seats">${b.seats}</span>
+      <span class="cl-share">${fmt.share(share)}</span>
+      <span class="cl-delta ${d > 0.0005 ? "up" : d < -0.0005 ? "down" : ""}">${
+        Math.abs(d) < 0.0005 ? "—"
+        : (d > 0 ? "+" : "−") + Math.abs(d * 100).toFixed(1) + " pts"}</span>
+    </div>`;
+  }).join("") +
+  `<p class="cl-foot">Share of the house under these rules, and the movement in
+    percentage points against the ${543}-seat house as it stands today.</p>`;
+
+  /* A second, smaller chamber showing today, so the comparison is visual and
+     not only numeric. Only worth drawing when the scenario actually differs. */
+  const same = state.house === 543 &&
+    rows.every(r => r.absent || r.seats === r.current);
+  if (same) { $("chamber-compare").innerHTML = ""; return; }
+
+  const todayBlocs = buildBlocs(
+    rows.map(r => ({ ...r, seats: r.current, absent: false })), state.bloc, BLOC_COLOURS
+  ).map(b => ({ ...b, label: labelFor(b.id) }));
+  const host = $("chamber-compare");
+  host.innerHTML = `<div class="cc-head">The house as it stands today, for comparison</div>
+                    <div id="chamber-today" class="chamber chamber-small"></div>`;
+  drawChamber($("chamber-today"), layout(543), todayBlocs, {
+    width: 520, label: "seats today", sublabel: "",
+  });
+}
+
 /* ------------------------------------------------------------------ readout */
 function renderReadout(code) {
   const el = $("readout");
   const r = lastRows.find(x => x.code === code);
-  if (!r) {
-    el.innerHTML = `<p class="readout-empty">Hover, tap or tab to a state.</p>`;
-    return;
-  }
+  if (!r) { el.innerHTML = `<p class="readout-empty">Hover, tap or tab to a state.</p>`; return; }
   if (r.absent) {
     el.innerHTML = `<h3>${r.name}</h3><p class="sub">${r.type}</p>
       <p class="readout-empty">Not enumerated in this census, so it takes no part in this allocation.</p>`;
     return;
   }
   const cls = r.change > 0 ? "up" : r.change < 0 ? "down" : "";
-  const vw = r.voteWeight;
   el.innerHTML = `
     <h3>${r.name}</h3>
-    <p class="sub">${r.type} &middot; ${GROUP_LABELS[r.group]}</p>
+    <p class="sub">${r.type} &middot; ${GROUP_LABELS[r.group]} &middot; ${ZONE_LABELS[r.zone] ?? "—"}</p>
     <dl>
       <dt>Seats now</dt><dd>${r.current}</dd>
       <dt>Under these rules</dt><dd>${r.seats}</dd>
       <dt>Change</dt><dd class="big ${cls}">${r.change === 0 ? "0" : fmt.d(r.change)}</dd>
       <dt>Population</dt><dd>${fmt.n(r.population)}</dd>
       <dt>People per MP</dt><dd>${fmt.n(Math.round(r.perMp))}</dd>
-      <dt>Vote weight</dt><dd>${fmt.w(vw)}</dd>
+      <dt>Vote weight</dt><dd>${fmt.w(r.voteWeight)}</dd>
     </dl>
-    <p class="vw-line">A vote here is worth <b>${fmt.w(vw)}</b> of an average vote
+    <p class="vw-line">A vote here is worth <b>${fmt.w(r.voteWeight)}</b> of an average vote
       under these rules${
-        Math.abs(vw - r.voteWeightNow) > 0.005
+        Math.abs(r.voteWeight - r.voteWeightNow) > 0.005
           ? `, against <b>${fmt.w(r.voteWeightNow)}</b> today.`
           : ", unchanged from today."}</p>`;
 }
 
-/* ------------------------------------------------- methodology + sources ---- */
+/* --------------------------------------------------- methodology + sources -- */
 function renderStaticProse() {
   $("method-table").innerHTML = `<table class="mtable"><tbody>${
-    Object.entries(METHODS).map(([k, m]) => `<tr>
-      <th>${m.label}</th><td>${m.note}</td></tr>`).join("")}</tbody></table>`;
+    Object.entries(METHODS).map(([k, m]) =>
+      `<tr><th>${m.label}</th><td>${m.note}</td></tr>`).join("")}</tbody></table>`;
 
   const src = D.unitsDoc;
   $("data-report").innerHTML = `
@@ -236,7 +298,7 @@ function renderStaticProse() {
     <p><b>Validation.</b> On the merged units the published table uses, the engine reproduces its
       figures exactly: Uttar Pradesh 89, Bihar 46, Rajasthan 30, Tamil Nadu 32 and Kerala 15 at 543
       under largest remainder, and Uttar Pradesh 133, Tamil Nadu 48 and Kerala 22 at 815 under
-      Huntington-Hill. The test suite carries 108 assertions.</p>`;
+      Huntington-Hill. The test suite carries 130 assertions.</p>`;
 
   const t = D.topoSource ?? {};
   $("carto").textContent =
@@ -261,12 +323,25 @@ function renderStaticProse() {
     "used under CC BY 4.0 with attribution.";
 
   renderMembership($("group-membership"), D.units);
+  drawMastheadArc();
+}
+
+/* A quiet arc of seats behind the masthead: the same idea as the chamber, at
+   the scale of decoration rather than data. */
+function drawMastheadArc() {
+  const svg = $("masthead-arc");
+  if (!svg) return;
+  const { seats, seatRadius } = layout(543, { innerRatio: 0.3 });
+  const W = 1200, R = 520, cx = W / 2, cy = 258;
+  svg.innerHTML = seats.map((s, i) => {
+    const x = cx + s.x * R, y = cy + s.y * R;
+    if (y < -10) return "";
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(seatRadius * R * 0.8).toFixed(2)}"/>`;
+  }).join("");
 }
 
 /* --------------------------------------------------- paradox + quota panels */
 function renderParadox() {
-  /* Recomputed from the live data rather than hardcoded, so the page can never
-     drift from the dataset it ships with. */
   const hits = [];
   let prev = allocate(D.units, 543, "hare", { year: state.year }).seats;
   for (let H = 544; H <= 900; H++) {
@@ -293,21 +368,19 @@ function renderQuota(result) {
   const v = quotaViolations(D.units, result.seats, state.house, state.year);
   const pinned = new Set(D.units.filter(u =>
     result.floors?.[u.code] > 1 && result.seats[u.code] === result.floors[u.code]).map(u => u.code));
-  const byMethod = v.map(x => `${D.byCode.get(x.code).name} has ${x.got} where quota is
+  const list = v.map(x => `${D.byCode.get(x.code).name} has ${x.got} where quota is
     ${x.lower}–${x.upper}${pinned.has(x.code) ? " <em>(pinned by a constraint, not by the rule)</em>" : ""}`);
   $("quota-report").innerHTML = v.length
     ? `<p>Under these settings, <b>${v.length}</b> unit${v.length > 1 ? "s fall" : " falls"} outside quota:
-       ${byMethod.join("; ")}.</p>`
+       ${list.join("; ")}.</p>`
     : `<p>Under these settings no unit falls outside its quota.</p>`;
 }
 
 /* --------------------------------------------------------------------- main */
 function apply(pushHistory = false) {
   const opts = {
-    year: state.year,
-    baseSeats: state.base,
-    protectAll: state.protectAll,
-    protectSmall: state.protectSmall,
+    year: state.year, baseSeats: state.base,
+    protectAll: state.protectAll, protectSmall: state.protectSmall,
     smallThreshold: state.threshold,
   };
   if (state.maxChange != null) opts.maxChange = state.maxChange;
@@ -318,10 +391,8 @@ function apply(pushHistory = false) {
   renderAlerts(result);
 
   if (result.infeasible) {
-    $("headline").innerHTML = "";
-    $("blocks").innerHTML = "";
-    $("shares").innerHTML = "";
-    $("voteweight").innerHTML = "";
+    for (const id of ["headline", "blocks", "shares", "voteweight", "chamber",
+                      "chamber-legend", "chamber-compare"]) $(id).innerHTML = "";
     renderQuota(result);
     return;
   }
@@ -330,8 +401,9 @@ function apply(pushHistory = false) {
   lastRows = rows;
 
   const { max } = mapApi.update(rows, state.view);
-  renderLegend($("map-legend"), state.view, state.view === "prop" ? max : max);
+  renderLegend($("map-legend"), state.view, max);
   renderHeadline(rows, result);
+  renderChamber(rows);
   renderBlocks($("blocks"), rows);
   renderShares($("shares"), rows, state.house);
   renderVoteWeight($("voteweight"), rows, state.year);
@@ -359,19 +431,17 @@ function wire() {
     set("maxChange", e.target.checked ? Number($("maxChange").value) || 0 : null));
   $("maxChange").addEventListener("input", e => set("maxChange", Math.max(0, Number(e.target.value) || 0)));
 
-  $("view-abs").addEventListener("click", () => set("view", "abs"));
-  $("view-prop").addEventListener("click", () => set("view", "prop"));
+  document.querySelectorAll("[data-view]").forEach(b =>
+    b.addEventListener("click", () => set("view", b.dataset.view)));
+  document.querySelectorAll("[data-bloc]").forEach(b =>
+    b.addEventListener("click", () => set("bloc", b.dataset.bloc)));
 
   $("reset").addEventListener("click", () => { state = { ...DEFAULTS }; apply(true); });
 
   $("copy-link").addEventListener("click", async () => {
     const url = location.origin + location.pathname + location.search;
-    try {
-      await navigator.clipboard.writeText(url);
-      $("copied").textContent = "Link copied.";
-    } catch {
-      $("copied").textContent = "Copy from the address bar.";
-    }
+    try { await navigator.clipboard.writeText(url); $("copied").textContent = "Link copied."; }
+    catch { $("copied").textContent = "Copy from the address bar."; }
     setTimeout(() => { $("copied").textContent = ""; }, 2600);
   });
 
@@ -421,7 +491,7 @@ function wire() {
   document.querySelectorAll(".preset").forEach(b =>
     b.addEventListener("click", () => {
       const p = PRESETS.find(x => x.id === b.dataset.id);
-      state = { ...DEFAULTS, ...p.state };
+      state = { ...DEFAULTS, ...p.state, view: state.view, bloc: state.bloc };
       apply(true);
     }));
 

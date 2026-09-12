@@ -1,8 +1,22 @@
-# Who gets the seats
+# Lok Sabha Delimitation Visualiser
+
+### Who gets the seats
+
+**Live: https://adichandrashekar.github.io/lok-sabha-delimitation-apportionment/**
 
 An interactive tool for Lok Sabha seat apportionment. Set the house size, the
 allocation rule, the population series and the constraints, and see which states
 gain and which lose.
+
+Two pages:
+
+- **`index.html`** — the visualiser. A choropleth defaulting to what a vote is
+  worth, a live chamber diagram where every dot is a seat, seat blocks, regional
+  shares, vote weight, a sortable table and CSV export. All state deep-links.
+- **`methods.html`** — the reference. Each rule explained from first principles,
+  the three apportionment paradoxes, the Balinski-Young impossibility theorem,
+  and a live worked example you can drag to watch a state lose a seat as the
+  house grows.
 
 **The argument.** Seat allocation between Indian states has been frozen on the
 1971 Census since the 42nd Amendment in 1976. Unfreezing it is not one
@@ -53,12 +67,31 @@ python scripts/build_units.py           # data/units.json
 python scripts/extract_projections.py   # projections, from the committed PDF
 python scripts/extract_census_series.py # 1971-2011, from the committed workbooks
 python scripts/verify_bhadrachalam.py   # proves the 2014 transfer arithmetic
-node   scripts/build_boundaries.mjs     # data/boundaries.topo.json + check image
+python scripts/make_social_card.py      # assets/social-card.png, from live data
+node   scripts/build_boundaries.mjs     # boundaries.topo.json, label points, check image
 node   scripts/make_snapshot.mjs        # test/snapshot.json — only when intended
 ```
 
-Python needs `pypdf`, `xlrd` and `openpyxl`, which are development-time only and
-are never loaded by the site.
+Python needs `pypdf`, `xlrd`, `openpyxl` and `Pillow`, all development-time only
+and never loaded by the site.
+
+## Design
+
+Fira Sans carries the interface and every number — it has real tabular figures
+and holds up at 11px in a dense table. IBM Plex Serif carries display type and
+long-form prose. Both have full fallback stacks, so a blocked font request
+degrades rather than breaking the layout.
+
+The diverging scale is orange to blue, not red to green and deliberately not red
+to blue either: red reads as alarm, and the page should not editorialise about
+which direction is the bad one. **Orange always means worse for the people who
+live there** — a seat lost, or a vote that carries less weight than average — so
+the readings do not fight each other when you switch map modes.
+
+The social preview card is generated from `data/units.json` by
+`scripts/make_social_card.py`, using the same hemicycle algorithm as the site, so
+it is a picture of the actual allocation rather than stock art. If the data
+changes, the card changes with it.
 
 ---
 
@@ -125,11 +158,14 @@ projection quotes the 2011 figure.
 ## Layout
 
 ```
-index.html
+index.html                 the visualiser
+methods.html               the reference: rules, paradoxes, worked examples
 css/style.css
+assets/  favicon.svg, social-card.png, og-square.png
 js/   apportion.js   methods and constraints, no DOM, testable in Node
       data.js        loading, normalisation, derived metrics
-      map.js         choropleth
+      map.js         choropleth and its three colour modes
+      hemicycle.js   chamber layout and rendering
       blocks.js      seat blocks
       panels.js      shares, vote weight, table, CSV
       app.js         state, URL sync, wiring

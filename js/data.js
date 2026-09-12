@@ -34,6 +34,24 @@ export const YEAR_NOTES = {
 
 export const GROUP_LABELS = { south: "South", hindi: "Hindi-belt", rest: "Everywhere else" };
 
+/* Zonal councils are OFFICIAL, unlike the analytical grouping above: they come
+   from the States Reorganisation Act 1956 and the North Eastern Council Act
+   1971. Andaman & Nicobar and Lakshadweep belong to no council. */
+export const ZONE_LABELS = {
+  southern: "Southern Council", northern: "Northern Council",
+  central: "Central Council", eastern: "Eastern Council",
+  western: "Western Council", nec: "North Eastern Council",
+  none: "No council",
+};
+
+/* Categorical fills for the chamber. Distinct in hue rather than only in
+   lightness, so they survive greyscale and the common colour-blindness types. */
+export const BLOC_COLOURS = {
+  south: "#17607a", hindi: "#b3722a", rest: "#6b7a86",
+  southern: "#17607a", northern: "#7a5aa0", central: "#b3722a",
+  eastern: "#c0563a", western: "#3f7d5e", nec: "#d2a02e", none: "#98a2aa",
+};
+
 /* --- TopoJSON -> GeoJSON, quantised-arc form only ------------------------- */
 function topoToFeatures(topo, objectName) {
   const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
