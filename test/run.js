@@ -203,20 +203,50 @@ ok("1991 allocates over the remaining 34 units",
    12. Maximum change per unit.
 --------------------------------------------------------------------------- */
 section("12. Maximum-change-per-unit constraint");
-for (const K of [0, 2, 5, 10]) {
-  let bad = 0;
+/* The exactness guarantee has to be checked WITH constraints on, not only in
+   section 1 with them off. An earlier version of this suite checked only that
+   units stayed inside their band, and missed an allocation that respected every
+   band and quietly summed to 594 instead of 600. */
+for (const K of [0, 1, 2, 3, 5, 10, 25]) {
+  let band = 0, inexact = [], threw = 0;
   for (const m of Object.keys(METHODS)) {
-    for (const H of [543, 600, 700, 815]) {
-      const r = allocate(units, H, m, { baseSeats: 2, maxChange: K });
+    for (let H = 450; H <= 900; H += 7) {
+      let r;
+      try { r = allocate(units, H, m, { baseSeats: 2, maxChange: K }); }
+      catch (e) { threw++; continue; }
       if (r.infeasible) continue;
+      if (sum(r.seats) !== H) inexact.push(`${m}@${H}=${sum(r.seats)}`);
       for (const u of units) {
         const got = r.seats[u.code];
         const lo = Math.max(1, u.current_seats - K), hi = u.current_seats + K;
-        if (got < lo || got > hi) bad++;
+        if (got < lo || got > hi) band++;
       }
     }
   }
-  ok(`maxChange=${K} keeps every unit inside its band`, bad === 0, `${bad} violations`);
+  ok(`maxChange=${K} keeps every unit inside its band`, band === 0, `${band} violations`);
+  ok(`maxChange=${K} still sums exactly to the house size`, inexact.length === 0,
+     `${inexact.length} wrong totals, e.g. ${inexact.slice(0, 3).join(", ")}`);
+  ok(`maxChange=${K} never throws`, threw === 0, `${threw} exceptions`);
+}
+
+/* Constraints combined, which is where the locking has least room to work. */
+{
+  let bad = [];
+  for (const m of Object.keys(METHODS)) {
+    for (const H of [543, 560, 600, 700, 815, 900]) {
+      for (const o of [{ protectAll: true }, { protectSmall: true },
+                       { protectAll: true, maxChange: 12 }, { protectSmall: true, maxChange: 4 }]) {
+        let r;
+        try { r = allocate(units, H, m, { baseSeats: 2, ...o }); }
+        catch (e) { bad.push(`${m}@${H} threw ${e.message}`); continue; }
+        if (!r.infeasible && sum(r.seats) !== H) bad.push(`${m}@${H} ${JSON.stringify(o)} = ${sum(r.seats)}`);
+        if (!r.infeasible && o.protectAll &&
+            units.some(u => r.seats[u.code] < u.current_seats)) bad.push(`${m}@${H} broke protectAll`);
+      }
+    }
+  }
+  ok("combined constraints stay exact and honour their floors", bad.length === 0,
+     `${bad.length}: ${bad.slice(0, 3).join("; ")}`);
 }
 const k0 = allocate(units, 543, "hare", { maxChange: 0 });
 ok("maxChange=0 at 543 reproduces the current house exactly",

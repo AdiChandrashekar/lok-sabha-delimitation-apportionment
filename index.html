@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who gets the seats — Lok Sabha apportionment</title>
+<meta name="description" content="Set the rules of Lok Sabha seat apportionment and see who gains and who loses. Six allocation methods, five censuses, official projections to 2036.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#controls">Skip to the controls</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Constitutional arithmetic</p>
+    <h1>Who gets the seats</h1>
+    <p class="standfirst">
+      Lok Sabha seats have been frozen on the 1971 Census since 1976. Unfreezing them is
+      not one calculation with one answer. Proportional allocation can be implemented by
+      at least six established rules, they disagree by dozens of seats for large states,
+      and choosing between them is a political choice wearing the costume of arithmetic.
+      Set the rules yourself.
+    </p>
+    <p class="status" id="status-line">
+      Status as at 13 September 2026. The Constitution (131st Amendment) Bill, 2026 was
+      negatived in the Lok Sabha on 17 April 2026, 298 for against the 352 needed. The
+      Delimitation Bill, 2026 and the Union Territories Laws (Amendment) Bill, 2026 fell
+      the same day. No revised bill has been introduced.
+    </p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ------------------------------------------------------------------ -->
+  <section id="controls" class="controls" aria-label="Allocation settings">
+    <div class="presets" role="group" aria-label="Presets">
+      <span class="presets-label">Start from</span>
+      <div class="preset-buttons" id="preset-buttons"></div>
+      <p class="preset-caption" id="preset-caption" aria-live="polite"></p>
+    </div>
+
+    <div class="control-grid">
+      <div class="field field-house">
+        <label for="house">House size</label>
+        <div class="house-row">
+          <input type="range" id="house-range" min="400" max="1100" step="1" value="543"
+                 aria-label="House size slider">
+          <input type="number" id="house" min="400" max="1100" step="1" value="543"
+                 inputmode="numeric" aria-describedby="house-hint">
+        </div>
+        <p class="hint" id="house-hint">Currently 543. The defeated bill proposed up to 815 from the states.</p>
+      </div>
+
+      <div class="field">
+        <label for="method">Allocation rule</label>
+        <select id="method"></select>
+        <p class="hint" id="method-note"></p>
+      </div>
+
+      <div class="field">
+        <label for="year">Population series</label>
+        <select id="year"></select>
+        <p class="hint" id="year-note"></p>
+      </div>
+
+      <div class="field field-base" id="base-field" hidden>
+        <label for="base">Base seats per unit</label>
+        <input type="number" id="base" min="0" max="10" step="1" value="2">
+        <p class="hint">Every state starts here before population counts for anything.</p>
+      </div>
+    </div>
+
+    <fieldset class="constraints">
+      <legend>Constraints</legend>
+
+      <label class="check">
+        <input type="checkbox" id="protectAll">
+        <span>
+          <strong>No state loses a seat</strong>
+          <em>At 543 this changes nothing at all. Protecting every state's absolute count
+              is arithmetically identical to keeping the freeze.</em>
+        </span>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" id="protectSmall">
+        <span>
+          <strong>Small states do not lose seats</strong>
+          <em>The exception assumed in the published projections, which applied it by hand
+              to Arunachal Pradesh, Goa, Manipur and Meghalaya.</em>
+        </span>
+      </label>
+
+      <div class="check check-sub" id="threshold-row" hidden>
+        <label for="threshold">Threshold</label>
+        <input type="number" id="threshold" min="0" max="50000000" step="100000" value="6000000">
+        <span class="hint">people. 60 lakh is the published assumption.</span>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" id="useMaxChange">
+        <span>
+          <strong>Cap the change per state</strong>
+          <em>A phased transition. No state moves more than this many seats either way —
+              a real proposal in this debate, and the constraint that decides most.</em>
+        </span>
+      </label>
+
+      <div class="check check-sub" id="maxchange-row" hidden>
+        <label for="maxChange">Cap</label>
+        <input type="number" id="maxChange" min="0" max="60" step="1" value="5">
+        <span class="hint">seats either way.</span>
+      </div>
+    </fieldset>
+
+    <div class="control-actions">
+      <button type="button" id="copy-link" class="btn">Copy link to this scenario</button>
+      <button type="button" id="reset" class="btn btn-quiet">Reset</button>
+      <span class="copied" id="copied" role="status" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <div id="alerts" aria-live="polite"></div>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="headline" aria-label="Summary">
+    <div class="headline-grid" id="headline"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="map-section">
+    <div class="section-head">
+      <h2>The map</h2>
+      <div class="viewtoggle" role="group" aria-label="Colour the map by">
+        <button type="button" class="seg is-on" id="view-abs" aria-pressed="true">Seats gained or lost</button>
+        <button type="button" class="seg" id="view-prop" aria-pressed="false">Change as a share of current</button>
+      </div>
+    </div>
+    <p class="section-note" id="view-note">
+      Absolute change. Big states dominate because the numbers are bigger. Switch to
+      proportional change to see what happens to small states.
+    </p>
+
+    <div class="map-layout">
+      <figure class="map-figure">
+        <div id="map" role="group" aria-label="Choropleth of India by seat change. Each state is focusable."></div>
+        <figcaption id="map-legend" class="legend"></figcaption>
+      </figure>
+
+      <aside class="readout" id="readout" aria-live="polite">
+        <p class="readout-empty">Hover, tap or tab to a state.</p>
+      </aside>
+    </div>
+
+    <p class="carto" id="carto"></p>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="blocks-section">
+    <div class="section-head"><h2>Every seat</h2></div>
+    <p class="section-note">
+      One square per seat. Solid squares are seats the state holds under these rules.
+      Hollow squares outlined in orange are seats it holds today and would lose.
+    </p>
+    <div id="blocks" class="blocks"></div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="panels">
+    <div class="panel">
+      <h2>Share of the house</h2>
+      <p class="section-note">
+        The bar is the new share. The notch is the share today.
+        <strong>These groupings are analytical, not official.</strong>
+        <button type="button" class="linkish" id="show-groups" aria-expanded="false">Show membership</button>
+      </p>
+      <div id="shares"></div>
+      <div id="group-membership" class="membership" hidden></div>
+    </div>
+
+    <div class="panel">
+      <h2>What a vote is worth</h2>
+      <p class="section-note">
+        People per MP against the national average, where 1.00 is average. Above 1.00
+        means a vote there carries more weight than the average vote.
+      </p>
+      <div id="voteweight"></div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="table-section">
+    <div class="section-head">
+      <h2>Every unit</h2>
+      <button type="button" class="btn" id="export-csv">Download CSV</button>
+    </div>
+    <p class="section-note">Click a column heading to sort.</p>
+    <div class="table-scroll">
+      <table id="table">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------------ -->
+  <section class="prose" id="methodology">
+    <h2>Methodology</h2>
+
+    <h3>What the tool does</h3>
+    <p>
+      It takes a population figure for each of India's 36 states and union territories,
+      a house size, an allocation rule and any constraints, and returns a whole number of
+      seats for every unit that sums <em>exactly</em> to the house size you set. Published
+      projection tables usually do not sum exactly, because each state is rounded
+      independently. The PRS annexure this tool is validated against totals 548 and 813
+      where it should total 543 and 815, for that reason and because a small-state
+      exception is applied by hand to four units.
+    </p>
+
+    <h3>The rules</h3>
+    <div id="method-table"></div>
+
+    <h3>The Alabama paradox</h3>
+    <p>
+      Largest remainder — the rule behind essentially every published delimitation
+      projection — can take a seat away from a state when the house <em>grows</em>. This is
+      not a rounding curiosity; it is a known defect of the method, set out in Balinski and
+      Young's <cite>Fair Representation</cite>, and it happens on this data inside the
+      politically relevant range.
+    </p>
+    <p id="paradox-summary"></p>
+    <div id="paradox-list"></div>
+    <p class="fine">
+      Verified independently in exact integer arithmetic, with no floating point anywhere,
+      so this is a property of the rule and the data rather than of our code. The divisor
+      methods — Huntington-Hill, Sainte-Laguë, D'Hondt — produce no instances at all.
+      Cube root and base-plus-proportional do, because both distribute by largest remainder.
+    </p>
+
+    <h3>Quota</h3>
+    <p>
+      A unit's <em>quota</em> is the pair of whole numbers bracketing its exact
+      proportional entitlement. Largest remainder never leaves that bracket. Divisor
+      methods can, and cube root and base-plus-proportional leave it almost everywhere,
+      which is expected — neither is trying to be proportional to population.
+    </p>
+    <div id="quota-report"></div>
+
+    <h3>The data</h3>
+    <div id="data-report"></div>
+
+    <h3>Known limits</h3>
+    <ul>
+      <li>The 2016–2036 series are <em>projections</em>, made in 2019 and published in 2020.
+          They predate both the 2027 Census and COVID-19 mortality.</li>
+      <li>Projected figures are printed in thousands, so each carries up to ±500 of rounding.</li>
+      <li>Assam was not enumerated in 1981; Jammu &amp; Kashmir and Ladakh were not
+          enumerated in 1991. Those cells are empty here rather than filled with an
+          estimate, and an allocation run on those years is missing a unit.</li>
+      <li>The historical series is on 2011 <em>district</em> boundaries. For 34 of 36 units
+          that is today's map. For Andhra Pradesh and Telangana it is not: the seven
+          Khammam mandals transferred in 2014 sit inside the historical Telangana figures.
+          The effect is 190,304 people in 2011 and smaller amounts earlier.</li>
+      <li>Regional groupings drive one panel and are <strong>not official</strong>.</li>
+    </ul>
+  </section>
+
+  <section class="prose" id="sources">
+    <h2>Sources</h2>
+    <div id="source-list"></div>
+    <p class="fine">
+      Code MIT licensed. The PRS Legislative Research projection table is used under
+      CC BY 4.0. Every figure here traces to a named source recorded in the data files
+      themselves; nothing is estimated or interpolated.
+    </p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p id="footer-note"></p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

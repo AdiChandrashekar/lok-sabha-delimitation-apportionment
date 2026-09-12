@@ -95,11 +95,14 @@ export function largestRemainder(units, houseSize) {
    The proportional part inherits largest remainder's Alabama paradox, which is
    honest: that is what "proportional" costs. */
 export function baseProportional(units, houseSize, base) {
-  const b = Math.max(0, Math.floor(base));
+  /* The base is capped at what the house can actually afford. Under a tight
+     max-change constraint the free pool can shrink until its requested base no
+     longer fits in the seats left, and throwing there would turn a legitimate
+     scenario into a crash. Reducing the base is the honest degradation: the
+     user asked for a floor the house cannot pay for. */
+  const asked = Math.max(0, Math.floor(base));
+  const b = Math.min(asked, Math.floor(houseSize / units.length));
   const floorTotal = b * units.length;
-  if (floorTotal > houseSize) {
-    throw new Error(`baseProportional: base ${b} x ${units.length} units exceeds house ${houseSize}`);
-  }
   const seats = {};
   units.forEach(u => { seats[u.code] = b; });
 
@@ -161,6 +164,20 @@ export const METHODS = {
     note: "A guaranteed base per unit, remainder proportional. The Cambridge Compromise shape used for the European Parliament.",
     quotaRespecting: false,
     run: (u, H, o) => baseProportional(u, H, o.baseSeats ?? 2)
+  },
+  /* Not an apportionment rule, and labelled as such wherever it appears. It
+     allocates in proportion to the CURRENT seat count rather than to
+     population, so every state keeps its present share and the house simply
+     grows. That is the arrangement reported to have been offered during the
+     April 2026 debate, and it is included so a reader can see what it does
+     rather than take a description of it on trust: at any house size the
+     regional shares do not move at all. */
+  statusQuo: {
+    label: "Uniform scaling of the current house",
+    note: "Not an apportionment rule. Seats in proportion to each state's CURRENT allocation, so every state keeps its present share and the house just grows. This is the shape of the uniform increase offered during the April 2026 debate.",
+    quotaRespecting: false,
+    populationIndependent: true,
+    run: (u, H) => largestRemainder(u.map(x => ({ code: x.code, weight: x.current })), H)
   }
 };
 
@@ -221,36 +238,85 @@ export function allocate(units, houseSize, methodKey, opts = {}) {
              floors, ceilings, minimumHouse, maximumHouse };
   }
 
+  const done = (seats, reason = null) => ({
+    infeasible: seats === null, reason, absent, seats,
+    floors, ceilings: maxChange !== null ? ceilings : null, minimumHouse, maximumHouse,
+  });
+  const sumOf = o => Object.values(o).reduce((a, b) => a + b, 0);
+  /* `current` rides along so a method can weight by the existing allocation
+     rather than by population. Every population-based method ignores it. */
+  const payloadOf = us => us.map(u => ({ code: u.code, weight: pop(u), current: u.current_seats }));
+
+  /* The method's UNCONSTRAINED answer over every active unit. Used only to rank
+     units in the repair pass below, so a seat added or removed to make the
+     total come out goes to whichever unit sits furthest from what the method
+     itself wanted. Huntington-Hill seeds a seat per unit and cannot run below
+     that, so this is skipped when the house is smaller than the unit count. */
+  let want = null;
+  if (houseSize >= active.length) {
+    try { want = method.run(payloadOf(active), houseSize, opts); } catch { want = null; }
+  }
+
   const locked = {};
   /* The locked set grows by at least one unit per iteration that changes
      anything, so this cannot run longer than the number of units. */
   for (let guard = 0; guard <= active.length + 1; guard++) {
     const free = active.filter(u => !(u.code in locked));
-    const lockedTotal = Object.values(locked).reduce((a, b) => a + b, 0);
-    const remaining = houseSize - lockedTotal;
+    if (free.length === 0) break;
 
-    if (free.length === 0) {
-      return { infeasible: false, reason: null, absent, seats: { ...locked },
-               floors, ceilings: maxChange !== null ? ceilings : null, minimumHouse, maximumHouse };
-    }
+    const remaining = houseSize - sumOf(locked);
+    const freeFloor = free.reduce((a, u) => a + floors[u.code], 0);
+    const freeCeil  = free.reduce((a, u) => a + ceilings[u.code], 0);
 
-    const payload = free.map(u => ({ code: u.code, weight: pop(u) }));
-    const result = method.run(payload, remaining, opts);
+    /* If what is left cannot be spread across the free units without breaking
+       their own bounds, the method has nothing to decide: pin them all on the
+       binding side and let the repair pass settle the difference. This also
+       keeps Huntington-Hill out of the state where it has fewer seats than
+       units, where it throws. */
+    if (remaining <= freeFloor) { for (const u of free) locked[u.code] = floors[u.code]; break; }
+    if (remaining >= freeCeil)  { for (const u of free) locked[u.code] = ceilings[u.code]; break; }
+
+    const result = method.run(payloadOf(free), remaining, opts);
 
     let changed = false;
     for (const u of free) {
       if (result[u.code] < floors[u.code]) { locked[u.code] = floors[u.code]; changed = true; }
       else if (result[u.code] > ceilings[u.code]) { locked[u.code] = ceilings[u.code]; changed = true; }
     }
-    if (!changed) {
-      return { infeasible: false, reason: null, absent, seats: { ...locked, ...result },
-               floors, ceilings: maxChange !== null ? ceilings : null, minimumHouse, maximumHouse };
-    }
+    /* Nothing is outside its band, so the method's own answer stands, and it
+       already sums to the house size exactly. This is the normal exit. */
+    if (!changed) return done({ ...locked, ...result });
   }
-  /* Reaching here is a bug in the locking argument above, not a property of the
-     user's inputs. Say so, rather than reporting it as an infeasible request. */
-  return { infeasible: true, reason: "did-not-converge", absent, seats: null,
-           floors, ceilings: maxChange !== null ? ceilings : null, minimumHouse, maximumHouse };
+
+  /* ---- repair pass -------------------------------------------------------
+     We reach here only when every unit finished pinned at a bound, which
+     happens once the constraints are tight enough that the method has no room
+     left to decide anything. Those pins need not sum to the house size, and
+     returning them anyway would silently break the one guarantee this engine
+     makes. So the difference is settled explicitly.
+
+     Seats move one at a time to, or from, the unit currently furthest from the
+     method's own unconstrained answer, ties broken by code. That is the
+     adjustment which deviates least from what the rule wanted, and it is fully
+     deterministic. Global feasibility was checked above, so the slack to do it
+     always exists. */
+  const seats = { ...locked };
+  let diff = houseSize - sumOf(seats);
+  const pressure = u => (want ? want[u.code] - seats[u.code] : pop(u) / Math.max(1, seats[u.code]));
+
+  let guard = 0;
+  while (diff !== 0) {
+    const dir = Math.sign(diff);
+    const room = active.filter(u => (dir > 0 ? seats[u.code] < ceilings[u.code]
+                                             : seats[u.code] > floors[u.code]));
+    if (!room.length || guard++ > houseSize + active.length) {
+      return done(null, "did-not-converge");
+    }
+    room.sort((a, b) => (pressure(b) - pressure(a)) * dir || (a.code < b.code ? -1 : 1));
+    seats[room[0].code] += dir;
+    diff -= dir;
+  }
+  return done(seats);
 }
 
 /* Flags units whose allocation falls outside their lower and upper quota.
