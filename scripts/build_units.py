@@ -63,9 +63,13 @@ SOURCE_NOTES = {
       "Pradesh for the Polavaram project. Those mandals are inside the 35,193,978 and outside today's "
       "Telangana.\n"
       "  We use 35,003,674 because the unit holding 17 Lok Sabha seats is present-day Telangana, not the "
-      "2011 districts. STILL OPEN: we have not summed the seven mandals from the sub-district Primary "
-      "Census Abstract to prove they total exactly 190,304. Everything else is consistent with it, but "
-      "that arithmetic is not yet closed."),
+      "2011 districts.\n"
+      "  CLOSED ARITHMETICALLY. scripts/verify_bhadrachalam.py reconstructs the transferred territory "
+      "from the schedule in Act 19 of 2014 and the Census 2011 village directory for Khammam, and lands "
+      "on 190,304 exactly, to the person: the seven mandals hold 225,233 across 338 revenue villages, "
+      "less the eleven villages the Act keeps in Telangana, which hold 34,929. Sarapaka and Bhadrachalam "
+      "are also retained but are enumerated as towns, so they fall outside the rural village directory "
+      "on both sides of the subtraction. Run that script to reproduce it."),
    "note": ("Telangana did not exist in 2011. Stated as 35,003,674, the figure carried by the Telangana "
             "government and the standard secondary sources for the ten districts transferred in 2014. "
             "CORRECTION, 2026-09-12: an earlier version of this file carried 35,193,978 on the stated "

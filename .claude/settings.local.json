@@ -22,7 +22,11 @@
       "WebFetch(domain:censusindia.gov.in)",
       "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\peek_census.py\" 2>&1)",
       "WebFetch(domain:www.census2011.co.in)",
-      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\divergence.mjs\")"
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\divergence.mjs\")",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\find_mandals.py\" 2>&1)",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\khammam_mandals.py\" 2>&1)",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\retained_villages.py\" 2>&1)",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\findvill.py\")"
     ]
   }
 }

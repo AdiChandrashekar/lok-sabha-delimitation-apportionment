@@ -71,7 +71,32 @@
         "reason": "Submergence area of the Polavaram irrigation project.",
         "effect_2011": 190304,
         "effect_note": "This is why two Telangana 2011 figures circulate. 35,193,978 is the sum of the ten districts as constituted at the 2011 Census, which is what Census Table A-02 gives. 35,003,674 is Telangana as actually constituted after the transfer, which is what the RGI Technical Group projections report gives. The difference is exactly 190,304, and residual Andhra Pradesh moves the same amount the other way, which is precisely why BOTH pairings reconcile to the undivided total of 84,580,777 and why a reconciliation test can never choose between them. units.json uses 35,003,674 because the unit holding 17 Lok Sabha seats is present-day Telangana, not the 2011 districts.",
-        "open_item": "Not yet closed arithmetically: sum these seven mandals in the Census 2011 sub-district Primary Census Abstract and confirm they total exactly 190,304."
+        "schedule_authority": "Act 19 of 2014, section 2, redefines Telangana's Khammam district as excluding the Mandals of Kukunoor, Velairpadu and Bhurgampadu, but not including twelve named revenue villages under the Palvancha Revenue Division, and the Mandals of Chintoor, Kunavaram, Vararamachandrapuram and Bhadrachalam, but not including the revenue village of Bhadrachalam. So seven whole mandals moved, less thirteen named revenue villages that stayed.",
+        "retained_villages": [
+          "Pinapaka (census: Pinapaka Pattinagar)",
+          "Morampalli Banzar (census: Morampalle)",
+          "Bhurgampad (census: Burgampahad)",
+          "Nagineniprolu",
+          "Krishnasagar (census: Krishna Sagar)",
+          "Tekula",
+          "Sarapaka (enumerated as a town)",
+          "Iravendi (census: Irvendi)",
+          "Mothepattinagar",
+          "Uppusaka",
+          "Sompalli (census: Sompalle)",
+          "Nakripeta (census: Nakirapeta)",
+          "Bhadrachalam (enumerated as a town)"
+        ],
+        "verification": {
+          "status": "closed",
+          "script": "scripts/verify_bhadrachalam.py",
+          "source": "District Census Handbook 2011, Khammam (district code 2810), inset table Appendix VD, Village Directory. https://censusindia.gov.in/nada/index.php/catalog/142",
+          "seven_mandals_2011": 225233,
+          "villages_retained_2011": 34929,
+          "net_transferred_2011": 190304,
+          "result": "Exact to the person. 225,233 less 34,929 is 190,304, which is precisely the gap between 35,193,978 and 35,003,674. Sarapaka and Bhadrachalam are retained but are enumerated as towns, so they are outside the rural village directory on both sides of the subtraction and do not enter the arithmetic.",
+          "caution": "Use the AMENDED list. The unamended Act named 'Bhurgampadu, Seetharamanagaram and Kondreka'; Act 19 of 2014 replaced that with the twelve-village list. Seetharama Nagar (code 579346, population 1,332) is NOT retained under the amended Act, and including it would break the reconciliation by exactly its own population."
+        }
       }
     },
     {
