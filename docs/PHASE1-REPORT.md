@@ -178,6 +178,49 @@ undocumented origin. Provenance here is *inferred from geometry*, which is
 stronger than a README claim but is not a citation. I would not want to print
 "Survey of India" as the source line on the strength of my own inference.
 
+### Candidate C — `udit-001/india-maps-data` — **SELECTED**
+
+Supplied by you at the checkpoint. Put through the identical inspector.
+
+**PASSES 15/15**, on both the district layer and the states layer.
+
+```
+geojson/india.geojson    760 district features   25,482 points   3.90 MB
+topojson/india.json      districts (726) AND states (36), shared arcs   866 KB
+  states layer extracted  36 features   5,026 points
+
+National bbox   lon 68.101 .. 97.388    lat 6.766 .. 37.077
+Max latitude 37.077N -- Gilgit-Baltistan present, inside Ladakh, as in the
+Survey of India map of November 2019.
+All twelve inclusion probes inside; all three controls outside.
+```
+
+This is a better fit than Candidate A for four reasons:
+
+1. **The states layer is already exactly our 36 units.** Not 37: Dadra & Nagar
+   Haveli and Daman & Diu is already a single merged feature, matching the
+   modelling decision we are keeping. Telangana, Ladakh and residual J&K are all
+   present and correct. No dissolve step, no sliver risk.
+2. **It ships TopoJSON with `districts` and `states` sharing one arc set.** The
+   states layer is 5,026 coordinate points. Extracting it alone will land far
+   under the 400 KB target — I expect well under 100 KB before any simplification.
+3. **`st_code` is the Census 2011 state code**, so the join to `units.json` is on
+   a numeric key rather than on names. Note the code set skips 25 and 28 and adds
+   26/36/37/38, which is precisely the post-2019 arrangement.
+4. **The district layer is retained for free**, and we will need district geometry
+   for the historical concordance in Phase 2.
+
+Caveat, stated plainly: the README says the data is *"not created by the
+repository owner... curated from publicly available sources on the internet"*,
+and the repository declares no licence and makes no Survey of India claim. So the
+provenance position is the same as Candidate A — inference from geometry, not a
+citation. The difference is that the geometry is a better fit for our purpose. I
+would still publish the probe table on the page rather than assert a source we
+cannot evidence, and we should ask the repository owner to state a licence.
+
+I verified this by writing `scripts/topo_extract.mjs`, a dependency-free
+TopoJSON decoder, rather than taking the object listing on trust.
+
 ### Candidate B — DataMeet / `geohacker/india`, `state/india_state.geojson`
 
 **FAILS 8/15. Not usable.**
@@ -307,5 +350,51 @@ quote both strings rather than pick the convenient one.
    rule — but it needs a caption wherever it shows, or every reader will read it as
    a bug.
 
-Nothing else proceeds until you have answered. No application code has been
-written.
+---
+
+## 8. Actions taken on your answers
+
+1. **Telangana switched to 35,003,674**, residual Andhra Pradesh to 49,577,103.
+   `build_units.py` regenerated `units.json` cleanly; totals unchanged at
+   1,210,854,977 and 543 seats; test suite still 46/0. Both units remain
+   `verified: false`, and the source note now records the correction, why the
+   reconciliation defence was invalid, and the data.gov.in route to settling it.
+2. **Reconciliation invariants now read their operands from the unit table**
+   instead of hardcoding them, with a comment stating plainly what a pair check
+   can and cannot catch.
+3. **`pypdf` 6.18.1 installed** for Phase 2 table extraction. Dev-time only.
+4. **Repository initialised**, `.gitignore` added, raw sources committed unmodified
+   under `scripts/raw/` — both boundary candidates and the 11 MB projections report.
+5. **Boundary inspector and TopoJSON decoder** committed as
+   `scripts/inspect_boundary.mjs` and `scripts/topo_extract.mjs`, so every claim in
+   §4 is reproducible.
+
+### One consequence of the correction you should see before Phase 2
+
+The corrected figure changes two of the kit's three headline findings.
+
+- **The Alabama paradox count moves from 33 to 32** across H=543..900. Uttarakhand
+  5→4 at 548 survives, Odisha 21→20 at 595 survives, but **Haryana 12→11 at 560
+  disappears**. Divisor methods remain at zero.
+- **The Huntington-Hill quota violation vanishes.** On the old figures UP received
+  133 at H=815 against a quota interval of [134,135] — a genuine violation. On the
+  corrected figures no method violates quota at 815 except cube root and
+  base-plus-proportional, which is expected of both.
+
+The central finding survives, and it survives in the form that matters: largest
+remainder still exhibits the paradox 32 times inside the politically live range,
+and Uttarakhand still loses a seat at 548, which is still the total of the
+published unchanged-strength column. But the specific instances are sensitive to a
+population figure we have not yet verified against primary data.
+
+Two implications for how we build. **No paradox instance may be hardcoded into
+copy** — the interface must compute and display them from whatever series is
+loaded, so the page cannot drift from the data. And this is now a second,
+independent reason to settle Telangana from the district tables rather than from
+source weight, which I will do at the start of Phase 2 unless you say otherwise.
+
+---
+
+**Phase 1 is complete and I am stopping here.** No application code has been
+written. Phase 2 begins on your confirmation, starting with the Telangana district
+aggregation and the projection tables.
