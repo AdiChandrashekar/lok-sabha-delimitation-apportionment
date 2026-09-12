@@ -15,7 +15,14 @@
       "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\ts_sensitivity.mjs\")",
       "WebFetch(domain:nhm.gov.in)",
       "PowerShell(pip install pypdf --quiet 2>&1)",
-      "PowerShell(python -c \"import pypdf; print\\('pypdf', pypdf.__version__\\)\")"
+      "PowerShell(python -c \"import pypdf; print\\('pypdf', pypdf.__version__\\)\")",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\pdf_scan.py\")",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\pdf_t21.py\")",
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\proj_effect.mjs\")",
+      "WebFetch(domain:censusindia.gov.in)",
+      "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\peek_census.py\" 2>&1)",
+      "WebFetch(domain:www.census2011.co.in)",
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\divergence.mjs\")"
     ]
   }
 }

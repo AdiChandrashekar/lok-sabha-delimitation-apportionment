@@ -1,33 +1,106 @@
 {
   "$schema_version": "1.0",
-  "purpose": "Maps historical administrative units onto present-day units so that census series from 1971 onward can be expressed in today's boundaries throughout. Incomplete by design. Entries marked to_source must be filled from primary sources before the historical series is used.",
+  "purpose": "Maps historical administrative units onto present-day units so that census series from 1971 onward can be expressed in today's boundaries throughout. Retained as documentation of the lineages; no longer the mechanism by which the series is built. See resolution_2026_09_12.",
   "method": "Build every historical series at DISTRICT level, then aggregate to present-day units using these lineages. Do not attempt to apportion state-level totals by ratio, because district boundaries themselves changed and ratio-splitting cannot be defended in a methodology note.",
+  "resolution_2026_09_12": {
+    "summary": "Most of the work this file anticipated turned out to be already done, officially. Census of India Table A-02, 'Decadal variation in population 1901-2011', states that 'the population figures for all the previous censuses in this table are adjusted to the 2011 jurisdiction'. The Registrar General has therefore already recast every earlier census onto the 2011 map, at both state and district level.",
+    "consequence": "Bihar/Jharkhand, Madhya Pradesh/Chhattisgarh and Uttar Pradesh/Uttarakhand need no hand-built district lists at all: each appears as its own row back to 1901. The three entries below that were marked to_source are superseded rather than filled, and are kept only as a record of the lineage.",
+    "what_remained_ours": "A-02 is on the 2011 map, which still has undivided Andhra Pradesh and undivided Jammu & Kashmir. Both were split by summing the district rows of the parent state in the same table: Telangana from district codes 532-541, Ladakh from 003 (Leh) and 004 (Kargil). This is the district-level method this file prescribes, applied to data the Registrar General had already reconciled.",
+    "residual_caveat": "A-02 is on 2011 DISTRICT boundaries, so the historical Telangana figures still contain the seven Khammam mandals transferred to Andhra Pradesh in 2014. See the Bhadrachalam note under the 2014 lineage below. The effect in 2011 is exactly 190,304 people; in earlier years it is smaller and unquantified. It is disclosed in units.json rather than patched, because patching it would mean ratio-splitting a district.",
+    "years_built": [
+      "1971",
+      "1981",
+      "1991",
+      "2001",
+      "2011"
+    ],
+    "years_refused": "1901 to 1961 are not reproducible as a 36-unit series and are excluded. Goa, Daman and Diu were Portuguese territory until 1961 and sit outside the Indian totals before then; Arunachal Pradesh and Puducherry are not separately enumerated in several early columns; and the Andhra Pradesh district rows do not sum to the state row before 1941, so the Telangana split cannot be derived. scripts/extract_census_series.py fails its own invariants if those years are restored, deliberately."
+  },
   "lineages": [
     {
       "event": "Andhra Pradesh Reorganisation Act, 2014",
       "effective": "2014-06-02",
       "parent": "undivided Andhra Pradesh",
-      "children": ["AP", "TS"],
-      "seat_split": {"AP": 25, "TS": 17, "parent_total": 42},
-      "affects_census_years": ["1971", "1981", "1991", "2001", "2011"],
+      "children": [
+        "AP",
+        "TS"
+      ],
+      "seat_split": {
+        "AP": 25,
+        "TS": 17,
+        "parent_total": 42
+      },
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991",
+        "2001",
+        "2011"
+      ],
       "transferred_districts_2011": {
         "to": "TS",
         "status": "verify",
-        "districts": ["Adilabad", "Nizamabad", "Karimnagar", "Medak", "Hyderabad", "Rangareddy", "Mahbubnagar", "Nalgonda", "Warangal", "Khammam"],
+        "districts": [
+          "Adilabad",
+          "Nizamabad",
+          "Karimnagar",
+          "Medak",
+          "Hyderabad",
+          "Rangareddy",
+          "Mahbubnagar",
+          "Nalgonda",
+          "Warangal",
+          "Khammam"
+        ],
         "note": "Ten districts as constituted at the 2011 Census. Telangana has since been reorganised into many more districts, so use 2011-vintage district boundaries for the 2011 aggregation and the contemporaneous vintage for each earlier census. Also account for the Bhadrachalam division villages transferred from Khammam to Andhra Pradesh at bifurcation, and later partly returned."
+      },
+      "bhadrachalam_transfer": {
+        "authority": "Andhra Pradesh Reorganisation Act 2014, as amended by the Andhra Pradesh Reorganisation (Amendment) Act 2014 (No. 19 of 2014)",
+        "effective": "2014",
+        "mandals": [
+          "Kukunoor",
+          "Velairpadu",
+          "Burgampadu",
+          "Chintoor",
+          "Kunavaram",
+          "Vararamachandrapuram (V.R. Puram)",
+          "Bhadrachalam"
+        ],
+        "from": "Khammam district (Telangana)",
+        "to": "Andhra Pradesh (East and West Godavari)",
+        "reason": "Submergence area of the Polavaram irrigation project.",
+        "effect_2011": 190304,
+        "effect_note": "This is why two Telangana 2011 figures circulate. 35,193,978 is the sum of the ten districts as constituted at the 2011 Census, which is what Census Table A-02 gives. 35,003,674 is Telangana as actually constituted after the transfer, which is what the RGI Technical Group projections report gives. The difference is exactly 190,304, and residual Andhra Pradesh moves the same amount the other way, which is precisely why BOTH pairings reconcile to the undivided total of 84,580,777 and why a reconciliation test can never choose between them. units.json uses 35,003,674 because the unit holding 17 Lok Sabha seats is present-day Telangana, not the 2011 districts.",
+        "open_item": "Not yet closed arithmetically: sum these seven mandals in the Census 2011 sub-district Primary Census Abstract and confirm they total exactly 190,304."
       }
     },
     {
       "event": "Jammu & Kashmir Reorganisation Act, 2019",
       "effective": "2019-10-31",
       "parent": "undivided Jammu & Kashmir",
-      "children": ["JK", "LA"],
-      "seat_split": {"JK": 5, "LA": 1, "parent_total": 6},
-      "affects_census_years": ["1971", "1981", "1991", "2001", "2011"],
+      "children": [
+        "JK",
+        "LA"
+      ],
+      "seat_split": {
+        "JK": 5,
+        "LA": 1,
+        "parent_total": 6
+      },
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991",
+        "2001",
+        "2011"
+      ],
       "transferred_districts_2011": {
         "to": "LA",
         "status": "verify",
-        "districts": ["Leh", "Kargil"],
+        "districts": [
+          "Leh",
+          "Kargil"
+        ],
         "note": "No census was conducted in Jammu & Kashmir in 1991. The 1991 series therefore has a genuine hole for JK and LA and must be shown as absent, not interpolated."
       }
     },
@@ -35,52 +108,120 @@
       "event": "Bihar Reorganisation Act, 2000",
       "effective": "2000-11-15",
       "parent": "undivided Bihar",
-      "children": ["BR", "JH"],
-      "affects_census_years": ["1971", "1981", "1991"],
-      "transferred_districts_1991": {"to": "JH", "status": "to_source",
-        "note": "Eighteen districts of the Chota Nagpur and Santhal Parganas divisions at formation. List them from the Act's First Schedule, then map back through 1991, 1981 and 1971 district vintages."}
+      "children": [
+        "BR",
+        "JH"
+      ],
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991"
+      ],
+      "transferred_districts_1991": {
+        "to": "JH",
+        "status": "superseded",
+        "note": "Eighteen districts of the Chota Nagpur and Santhal Parganas divisions at formation. List them from the Act's First Schedule, then map back through 1991, 1981 and 1971 district vintages.",
+        "superseded_note": "SUPERSEDED by Census Table A-02, which already reports this state separately for every census back to 1901 on 2011 boundaries. No hand-built district list is required. See resolution_2026_09_12."
+      }
     },
     {
       "event": "Madhya Pradesh Reorganisation Act, 2000",
       "effective": "2000-11-01",
       "parent": "undivided Madhya Pradesh",
-      "children": ["MP", "CT"],
-      "affects_census_years": ["1971", "1981", "1991"],
-      "transferred_districts_1991": {"to": "CT", "status": "to_source",
-        "note": "Sixteen districts at formation. List from the Act's First Schedule."}
+      "children": [
+        "MP",
+        "CT"
+      ],
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991"
+      ],
+      "transferred_districts_1991": {
+        "to": "CT",
+        "status": "superseded",
+        "note": "Sixteen districts at formation. List from the Act's First Schedule.",
+        "superseded_note": "SUPERSEDED by Census Table A-02, which already reports this state separately for every census back to 1901 on 2011 boundaries. No hand-built district list is required. See resolution_2026_09_12."
+      }
     },
     {
       "event": "Uttar Pradesh Reorganisation Act, 2000",
       "effective": "2000-11-09",
       "parent": "undivided Uttar Pradesh",
-      "children": ["UP", "UK"],
-      "affects_census_years": ["1971", "1981", "1991"],
-      "transferred_districts_1991": {"to": "UK", "status": "verify",
-        "districts": ["Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", "Udham Singh Nagar", "Uttarkashi"],
-        "note": "Thirteen districts at formation. Several were themselves created during the 1990s, so earlier censuses need the parent district of each."}
+      "children": [
+        "UP",
+        "UK"
+      ],
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991"
+      ],
+      "transferred_districts_1991": {
+        "to": "UK",
+        "status": "verify",
+        "districts": [
+          "Almora",
+          "Bageshwar",
+          "Chamoli",
+          "Champawat",
+          "Dehradun",
+          "Haridwar",
+          "Nainital",
+          "Pauri Garhwal",
+          "Pithoragarh",
+          "Rudraprayag",
+          "Tehri Garhwal",
+          "Udham Singh Nagar",
+          "Uttarkashi"
+        ],
+        "note": "Thirteen districts at formation. Several were themselves created during the 1990s, so earlier censuses need the parent district of each."
+      }
     },
     {
       "event": "Dadra & Nagar Haveli and Daman & Diu (Merger of Union Territories) Act, 2019",
       "effective": "2020-01-26",
-      "parents": ["Dadra & Nagar Haveli", "Daman & Diu"],
-      "children": ["DH"],
-      "seat_split": {"DH": 2},
-      "affects_census_years": ["1971", "1981", "1991", "2001", "2011"],
+      "parents": [
+        "Dadra & Nagar Haveli",
+        "Daman & Diu"
+      ],
+      "children": [
+        "DH"
+      ],
+      "seat_split": {
+        "DH": 2
+      },
+      "affects_census_years": [
+        "1971",
+        "1981",
+        "1991",
+        "2001",
+        "2011"
+      ],
       "note": "Straight merger, so historical aggregation is a simple sum in every year. Goa, Daman and Diu was a single union territory until Goa became a state in 1987, so pre-1987 census years need Daman and Diu separated out of that unit."
     },
     {
       "event": "Goa, Daman and Diu Reorganisation Act, 1987",
       "effective": "1987-05-30",
       "parent": "Goa, Daman and Diu (UT)",
-      "children": ["GA", "part of DH"],
-      "affects_census_years": ["1971", "1981"],
-      "status": "to_source"
+      "children": [
+        "GA",
+        "part of DH"
+      ],
+      "affects_census_years": [
+        "1971",
+        "1981"
+      ],
+      "status": "superseded",
+      "superseded_note": "SUPERSEDED by Census Table A-02, which already reports this state separately for every census back to 1901 on 2011 boundaries. No hand-built district list is required. See resolution_2026_09_12."
     },
     {
       "event": "Sikkim accession",
       "effective": "1975-05-16",
       "note": "Sikkim was not part of India at the 1971 Census. The 1971 series has a genuine hole for SK. Show it as absent, do not backfill.",
-      "affects_census_years": ["1971"]
+      "affects_census_years": [
+        "1971"
+      ]
     }
   ],
   "additional_hazards": [
