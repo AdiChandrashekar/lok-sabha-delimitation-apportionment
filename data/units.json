@@ -97,8 +97,9 @@
       "zonal_council": "none",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 11.7,
-        "lon": 92.7
+        "lat": 12.5586,
+        "lon": 92.842,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -122,8 +123,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 15.9,
-        "lon": 80.0
+        "lat": 14.8117,
+        "lon": 78.8485,
+        "source": "computed"
       },
       "population_source": "derived_ap"
     },
@@ -147,8 +149,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 28.0,
-        "lon": 94.5
+        "lat": 28.4601,
+        "lon": 94.7071,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -172,8 +175,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 26.2,
-        "lon": 92.8
+        "lat": 26.2017,
+        "lon": 92.9944,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -197,8 +201,9 @@
       "zonal_council": "eastern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 25.6,
-        "lon": 85.5
+        "lat": 25.7102,
+        "lon": 85.5398,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -222,8 +227,9 @@
       "zonal_council": "northern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 30.74,
-        "lon": 76.79
+        "lat": 30.7237,
+        "lon": 76.7685,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -247,8 +253,9 @@
       "zonal_council": "central",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 21.3,
-        "lon": 82.0
+        "lat": 22.146,
+        "lon": 82.5582,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -272,8 +279,9 @@
       "zonal_council": "western",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 20.3,
-        "lon": 72.95
+        "lat": 20.2292,
+        "lon": 73.0506,
+        "source": "computed"
       },
       "population_source": "derived_dh"
     },
@@ -297,8 +305,9 @@
       "zonal_council": "northern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 28.65,
-        "lon": 77.15
+        "lat": 28.6624,
+        "lon": 77.1194,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -322,8 +331,9 @@
       "zonal_council": "western",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 15.4,
-        "lon": 74.0
+        "lat": 15.3307,
+        "lon": 74.0936,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -347,8 +357,9 @@
       "zonal_council": "western",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 22.5,
-        "lon": 71.5
+        "lat": 23.4001,
+        "lon": 71.8919,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -372,8 +383,9 @@
       "zonal_council": "northern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 29.2,
-        "lon": 76.3
+        "lat": 29.0446,
+        "lon": 76.2552,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -397,8 +409,9 @@
       "zonal_council": "northern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 31.8,
-        "lon": 77.3
+        "lat": 31.8771,
+        "lon": 77.314,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -422,8 +435,9 @@
       "zonal_council": "northern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 33.5,
-        "lon": 75.3
+        "lat": 33.7339,
+        "lon": 74.5911,
+        "source": "computed"
       },
       "population_source": "derived_jk"
     },
@@ -447,8 +461,9 @@
       "zonal_council": "eastern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 23.7,
-        "lon": 85.5
+        "lat": 23.5274,
+        "lon": 85.0149,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -472,8 +487,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 14.8,
-        "lon": 76.0
+        "lat": 14.8819,
+        "lon": 75.5323,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -497,8 +513,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 10.5,
-        "lon": 76.4
+        "lat": 9.815,
+        "lon": 76.745,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -522,8 +539,9 @@
       "zonal_council": "northern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 34.2,
-        "lon": 77.6
+        "lat": 34.216,
+        "lon": 77.5828,
+        "source": "computed"
       },
       "population_source": "derived_la"
     },
@@ -547,8 +565,9 @@
       "zonal_council": "none",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 10.6,
-        "lon": 72.6
+        "lat": 8.2693,
+        "lon": 73.0413,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -572,8 +591,9 @@
       "zonal_council": "central",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 23.5,
-        "lon": 78.5
+        "lat": 23.5245,
+        "lon": 80.1631,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -597,8 +617,9 @@
       "zonal_council": "western",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 19.4,
-        "lon": 76.0
+        "lat": 19.3628,
+        "lon": 75.2871,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -622,8 +643,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 24.7,
-        "lon": 93.9
+        "lat": 24.614,
+        "lon": 93.7778,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -647,8 +669,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 25.5,
-        "lon": 91.3
+        "lat": 25.5676,
+        "lon": 90.4453,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -672,8 +695,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 23.3,
-        "lon": 92.8
+        "lat": 23.5857,
+        "lon": 92.8542,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -697,8 +721,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 26.1,
-        "lon": 94.4
+        "lat": 26.0681,
+        "lon": 94.5756,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -722,8 +747,9 @@
       "zonal_council": "eastern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 20.5,
-        "lon": 84.5
+        "lat": 20.768,
+        "lon": 84.648,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -747,8 +773,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 11.93,
-        "lon": 79.83
+        "lat": 10.9421,
+        "lon": 79.8028,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -772,8 +799,9 @@
       "zonal_council": "northern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 31.0,
-        "lon": 75.4
+        "lat": 30.7062,
+        "lon": 75.5295,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -797,8 +825,9 @@
       "zonal_council": "northern",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 26.8,
-        "lon": 73.8
+        "lat": 26.9517,
+        "lon": 73.9172,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -822,8 +851,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 27.6,
-        "lon": 88.5
+        "lat": 27.4986,
+        "lon": 88.4315,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -847,8 +877,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 11.0,
-        "lon": 78.5
+        "lat": 10.914,
+        "lon": 78.2761,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -872,8 +903,9 @@
       "zonal_council": "southern",
       "analytical_group": "south",
       "label_point": {
-        "lat": 17.9,
-        "lon": 79.0
+        "lat": 17.8702,
+        "lon": 78.9873,
+        "source": "computed"
       },
       "population_source": "derived_ts"
     },
@@ -897,8 +929,9 @@
       "zonal_council": "nec",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 23.8,
-        "lon": 91.7
+        "lat": 23.7354,
+        "lon": 91.5634,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -922,8 +955,9 @@
       "zonal_council": "central",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 27.0,
-        "lon": 80.8
+        "lat": 26.8775,
+        "lon": 80.5765,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -947,8 +981,9 @@
       "zonal_council": "central",
       "analytical_group": "hindi",
       "label_point": {
-        "lat": 30.1,
-        "lon": 79.2
+        "lat": 30.0926,
+        "lon": 79.4704,
+        "source": "computed"
       },
       "population_source": "prs"
     },
@@ -972,8 +1007,9 @@
       "zonal_council": "eastern",
       "analytical_group": "rest",
       "label_point": {
-        "lat": 23.8,
-        "lon": 87.8
+        "lat": 23.0944,
+        "lon": 87.7056,
+        "source": "computed"
       },
       "population_source": "prs"
     }

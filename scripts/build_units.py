@@ -161,8 +161,24 @@ except FileNotFoundError:
 # These become null in the output and must be shown as absent, never interpolated.
 SUPPRESS = {("JK", "1991"), ("LA", "1991"), ("AS", "1981")}
 
+# ---------------------------------------------------------------------------
+# Label points. The lat/lon in the table above were eyeballed and several are
+# poor: Lakshadweep's sat between two islands rather than on one. If
+# scripts/build_boundaries.mjs has produced label-points.json, its computed pole
+# of inaccessibility wins, because that is measured from the geometry we ship.
+# The table's values remain as the fallback so this script still runs standalone.
+# ---------------------------------------------------------------------------
+LABELS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "label-points.json")
+try:
+    with open(LABELS_PATH) as f:
+        LABELS = json.load(f)["points"]
+except (FileNotFoundError, KeyError):
+    LABELS = {}
+
 units = []
 for code, name, typ, seats, pop, zone, group, lat, lon, src in U:
+    if code in LABELS:
+        lat, lon = LABELS[code]["lat"], LABELS[code]["lon"]
     population = {"2011": pop}
     for y in HIST_YEARS:
         v = HIST.get(code, {}).get(y) if HIST else None
@@ -177,7 +193,8 @@ for code, name, typ, seats, pop, zone, group, lat, lon, src in U:
         "population": population,
         "zonal_council": zone,
         "analytical_group": group,
-        "label_point": {"lat": lat, "lon": lon},
+        "label_point": {"lat": lat, "lon": lon,
+                        "source": "computed" if code in LABELS else "hand"},
         "population_source": src,
     })
 

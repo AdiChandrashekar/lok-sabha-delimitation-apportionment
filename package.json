@@ -1,0 +1,13 @@
+{
+  "name": "who-gets-the-seats",
+  "private": true,
+  "type": "module",
+  "description": "Interactive Lok Sabha seat apportionment. No build step: this file exists only so Node treats the .js test and engine files as ES modules on versions older than 22.7, which would otherwise need automatic module detection. The site itself has no dependencies and is served as static files.",
+  "scripts": {
+    "test": "node test/run.js",
+    "serve": "python -m http.server 8123",
+    "build:boundaries": "node scripts/build_boundaries.mjs",
+    "build:snapshot": "node scripts/make_snapshot.mjs"
+  },
+  "license": "MIT"
+}
