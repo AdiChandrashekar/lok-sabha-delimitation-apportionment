@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(node --version)",
+      "PowerShell(python --version)",
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\Desktop\\\\Claude Code\\\\India Map Visualisations\\\\Delimitation\\\\test\\\\run.js\")",
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\phase1_checks.mjs\")",
+      "WebSearch",
+      "WebFetch(domain:prsindia.org)",
+      "WebFetch(domain:www.livelaw.in)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:yashveeeeeeer.github.io)",
+      "WebFetch(domain:onlinemaps.surveyofindia.gov.in)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\ts_sensitivity.mjs\")",
+      "WebFetch(domain:nhm.gov.in)",
+      "PowerShell(pip install pypdf --quiet 2>&1)",
+      "PowerShell(python -c \"import pypdf; print\\('pypdf', pypdf.__version__\\)\")"
+    ]
+  }
+}

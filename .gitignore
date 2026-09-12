@@ -1,0 +1,9 @@
+# The site has no build step and no dependencies. Nothing here is generated at
+# serve time. These entries cover development-time tooling only.
+
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.venv/

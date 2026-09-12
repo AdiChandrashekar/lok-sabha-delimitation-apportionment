@@ -1,0 +1,59 @@
+{
+  "$schema_version": "1.0",
+  "purpose": "Test fixture. Published projection table used to validate the apportionment engine.",
+  "source": {
+    "publisher": "PRS Legislative Research",
+    "document": "The Delimitation Bill, 2026",
+    "url": "https://prsindia.org/billtrack/the-delimitation-bill-2026",
+    "licence": "CC BY 4.0",
+    "retrieved": "2026-09-12"
+  },
+  "caveats": [
+    "This table uses MERGED units: Andhra Pradesh includes Telangana, Jammu & Kashmir includes Ladakh, and Dadra & Nagar Haveli and Daman & Diu are listed separately. It therefore has 35 rows against our 36 units.",
+    "Column totals are 548 and 813 rather than 543 and 815 because each unit is rounded independently and a small-state exception is applied by hand.",
+    "Validate the engine against this fixture using the MERGED unit configuration. The live site uses the split configuration and will differ for the affected units and, through changed remainder ordering, slightly elsewhere. Document the difference rather than suppressing it."
+  ],
+  "merged_units": {
+    "AN": {"pop2011": 380581,    "current": 1,  "unchanged": 1,   "plus50": 1},
+    "AP": {"pop2011": 84580777,  "current": 42, "unchanged": 38,  "plus50": 56},
+    "AR": {"pop2011": 1383727,   "current": 2,  "unchanged": 2,   "plus50": 2},
+    "AS": {"pop2011": 31205576,  "current": 14, "unchanged": 14,  "plus50": 21},
+    "BR": {"pop2011": 104099452, "current": 40, "unchanged": 46,  "plus50": 69},
+    "CH": {"pop2011": 1055450,   "current": 1,  "unchanged": 1,   "plus50": 1},
+    "CT": {"pop2011": 25545198,  "current": 11, "unchanged": 11,  "plus50": 17},
+    "DN": {"pop2011": 343709,    "current": 1,  "unchanged": 1,   "plus50": 1},
+    "DD": {"pop2011": 243247,    "current": 1,  "unchanged": 1,   "plus50": 1},
+    "GA": {"pop2011": 1458545,   "current": 2,  "unchanged": 2,   "plus50": 2},
+    "GJ": {"pop2011": 60439692,  "current": 26, "unchanged": 27,  "plus50": 40},
+    "HR": {"pop2011": 25351462,  "current": 10, "unchanged": 11,  "plus50": 17},
+    "HP": {"pop2011": 6864602,   "current": 4,  "unchanged": 3,   "plus50": 5},
+    "JK": {"pop2011": 12541302,  "current": 6,  "unchanged": 6,   "plus50": 8},
+    "JH": {"pop2011": 32988134,  "current": 14, "unchanged": 15,  "plus50": 22},
+    "KA": {"pop2011": 61095297,  "current": 28, "unchanged": 27,  "plus50": 41},
+    "KL": {"pop2011": 33406061,  "current": 20, "unchanged": 15,  "plus50": 22},
+    "LD": {"pop2011": 64473,     "current": 1,  "unchanged": 1,   "plus50": 1},
+    "MP": {"pop2011": 72626809,  "current": 29, "unchanged": 32,  "plus50": 48},
+    "MH": {"pop2011": 112374333, "current": 48, "unchanged": 50,  "plus50": 75},
+    "MN": {"pop2011": 2855794,   "current": 2,  "unchanged": 2,   "plus50": 2},
+    "ML": {"pop2011": 2966889,   "current": 2,  "unchanged": 2,   "plus50": 2},
+    "MZ": {"pop2011": 1097206,   "current": 1,  "unchanged": 1,   "plus50": 1},
+    "NL": {"pop2011": 1978502,   "current": 1,  "unchanged": 1,   "plus50": 1},
+    "DL": {"pop2011": 16787941,  "current": 7,  "unchanged": 7,   "plus50": 11},
+    "OD": {"pop2011": 41974218,  "current": 21, "unchanged": 19,  "plus50": 28},
+    "PY": {"pop2011": 1247953,   "current": 1,  "unchanged": 1,   "plus50": 1},
+    "PB": {"pop2011": 27743338,  "current": 13, "unchanged": 12,  "plus50": 19},
+    "RJ": {"pop2011": 68548437,  "current": 25, "unchanged": 30,  "plus50": 46},
+    "SK": {"pop2011": 610577,    "current": 1,  "unchanged": 1,   "plus50": 1},
+    "TN": {"pop2011": 72147030,  "current": 39, "unchanged": 32,  "plus50": 48},
+    "TR": {"pop2011": 3673917,   "current": 2,  "unchanged": 2,   "plus50": 2},
+    "UP": {"pop2011": 199812341, "current": 80, "unchanged": 89,  "plus50": 133},
+    "UK": {"pop2011": 10086292,  "current": 5,  "unchanged": 4,   "plus50": 7},
+    "WB": {"pop2011": 91276115,  "current": 42, "unchanged": 41,  "plus50": 61}
+  },
+  "published_totals": {"current": 543, "unchanged": 548, "plus50": 813},
+  "assertions_confirmed_in_prototype": {
+    "hare_at_543": {"UP": 89, "BR": 46, "RJ": 30, "TN": 32, "KL": 15, "MH": 50, "WB": 40},
+    "huntington_at_815": {"UP": 133, "TN": 48, "KL": 22, "BR": 70, "RJ": 46, "MH": 75, "WB": 61},
+    "note": "Both reproduced exactly by the prototype engine on MERGED units with a one-seat minimum and no other constraints."
+  }
+}

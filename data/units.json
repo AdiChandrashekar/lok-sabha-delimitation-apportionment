@@ -1,0 +1,846 @@
+{
+  "$schema_version": "1.0",
+  "generated_by": "scripts/build_units.py",
+  "unit_count": 36,
+  "totals": {
+    "current_seats": 543,
+    "population_2011": 1210854977
+  },
+  "modelling_decisions": [
+    "Andhra Pradesh and Telangana are separate units. Their 42 undivided seats split 25 and 17.",
+    "Jammu & Kashmir and Ladakh are separate units. Their 6 undivided seats split 5 and 1.",
+    "Dadra & Nagar Haveli and Daman & Diu is modelled as ONE unit holding TWO seats, matching its post-2020 legal status. Modelling it as two units would change the output of any rule with a per-unit minimum.",
+    "Zonal council membership follows the States Reorganisation Act 1956 and the North Eastern Council Act 1971. Andaman & Nicobar Islands and Lakshadweep belong to no zonal council.",
+    "analytical_group is NOT official. It drives the regional share panel only and must be labelled as analytical wherever shown."
+  ],
+  "population_series_status": {
+    "2011": "populated",
+    "1971": "to_source",
+    "1981": "to_source",
+    "1991": "to_source",
+    "2001": "to_source",
+    "2026_proj": "to_source",
+    "2036_proj": "to_source"
+  },
+  "seat_source": "First Schedule, Representation of the People Act, 1950, as amended by the Andhra Pradesh Reorganisation Act 2014 and the Jammu & Kashmir Reorganisation Act 2019. VERIFY against the current Election Commission of India allocation.",
+  "population_source_notes": {
+    "prs": {
+      "verified": true,
+      "note": "Census 2011 figure as printed in the PRS Legislative Research annexure to 'The Delimitation Bill, 2026'. Cross-check against the Census 2011 primary census abstract before publication."
+    },
+    "derived_ts": {
+      "verified": false,
+      "note": "Telangana did not exist in 2011. Stated as 35,003,674, the figure carried by the Telangana government and the standard secondary sources for the ten districts transferred in 2014. CORRECTION, 2026-09-12: an earlier version of this file carried 35,193,978 on the stated ground that it was the only figure reconciling to the undivided Andhra Pradesh total of 84,580,777. That reasoning was wrong. The reconciliation test cannot discriminate between the candidates, because it is satisfied by construction for ANY complementary pair: 35,193,978 + 49,386,799 and 35,003,674 + 49,577,103 both sum to exactly 84,580,777. The two Telangana candidates differ by 190,304 and the two residual-AP candidates differ by the same amount. The choice therefore rests on source weight alone, which favours 35,003,674. STILL UNVERIFIED against primary data. Settle it by summing Census 2011 district totals for the ten transferred districts listed in concordance.json, via the Village/Town-wise Primary Census Abstract 2011 for Andhra Pradesh on data.gov.in. The choice is not cosmetic: it moves Gujarat and Telangana by a seat each at a house of 815 under largest remainder."
+    },
+    "derived_ap": {
+      "verified": false,
+      "note": "Residual Andhra Pradesh. Derived as undivided Andhra Pradesh 84,580,777 minus Telangana 35,003,674. See the TS note for the correction history and why the reconciliation test does not by itself justify either candidate. VERIFY from district tables."
+    },
+    "derived_la": {
+      "verified": false,
+      "note": "Ladakh did not exist as a separate unit in 2011. Stated as Leh 133,487 plus Kargil 140,802. VERIFY both against the Census 2011 district primary census abstract for Jammu & Kashmir."
+    },
+    "derived_jk": {
+      "verified": false,
+      "note": "Residual Jammu & Kashmir. Derived as undivided Jammu & Kashmir 12,541,302 minus Ladakh 274,289. VERIFY from district tables."
+    },
+    "derived_dh": {
+      "verified": false,
+      "note": "Dadra & Nagar Haveli and Daman & Diu merged into one union territory on 26 January 2020 but retain two Lok Sabha seats. Stated as Dadra & Nagar Haveli 343,709 plus Daman & Diu 243,247, both from the PRS annexure. The arithmetic is trivial but flagged because the modelling decision, one unit with two seats versus two units with one each, materially changes the output of any rule with a per-unit minimum."
+    }
+  },
+  "units": [
+    {
+      "code": "AN",
+      "name": "Andaman & Nicobar Islands",
+      "type": "UT",
+      "current_seats": 1,
+      "population": {
+        "2011": 380581,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "none",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 11.7,
+        "lon": 92.7
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "AP",
+      "name": "Andhra Pradesh",
+      "type": "State",
+      "current_seats": 25,
+      "population": {
+        "2011": 49577103,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 15.9,
+        "lon": 80.0
+      },
+      "population_source": "derived_ap"
+    },
+    {
+      "code": "AR",
+      "name": "Arunachal Pradesh",
+      "type": "State",
+      "current_seats": 2,
+      "population": {
+        "2011": 1383727,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 28.0,
+        "lon": 94.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "AS",
+      "name": "Assam",
+      "type": "State",
+      "current_seats": 14,
+      "population": {
+        "2011": 31205576,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 26.2,
+        "lon": 92.8
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "BR",
+      "name": "Bihar",
+      "type": "State",
+      "current_seats": 40,
+      "population": {
+        "2011": 104099452,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "eastern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 25.6,
+        "lon": 85.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "CH",
+      "name": "Chandigarh",
+      "type": "UT",
+      "current_seats": 1,
+      "population": {
+        "2011": 1055450,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 30.74,
+        "lon": 76.79
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "CT",
+      "name": "Chhattisgarh",
+      "type": "State",
+      "current_seats": 11,
+      "population": {
+        "2011": 25545198,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "central",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 21.3,
+        "lon": 82.0
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "DH",
+      "name": "Dadra & Nagar Haveli and Daman & Diu",
+      "type": "UT",
+      "current_seats": 2,
+      "population": {
+        "2011": 586956,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "western",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 20.3,
+        "lon": 72.95
+      },
+      "population_source": "derived_dh"
+    },
+    {
+      "code": "DL",
+      "name": "NCT of Delhi",
+      "type": "UT",
+      "current_seats": 7,
+      "population": {
+        "2011": 16787941,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 28.65,
+        "lon": 77.15
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "GA",
+      "name": "Goa",
+      "type": "State",
+      "current_seats": 2,
+      "population": {
+        "2011": 1458545,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "western",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 15.4,
+        "lon": 74.0
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "GJ",
+      "name": "Gujarat",
+      "type": "State",
+      "current_seats": 26,
+      "population": {
+        "2011": 60439692,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "western",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 22.5,
+        "lon": 71.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "HR",
+      "name": "Haryana",
+      "type": "State",
+      "current_seats": 10,
+      "population": {
+        "2011": 25351462,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 29.2,
+        "lon": 76.3
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "HP",
+      "name": "Himachal Pradesh",
+      "type": "State",
+      "current_seats": 4,
+      "population": {
+        "2011": 6864602,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 31.8,
+        "lon": 77.3
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "JK",
+      "name": "Jammu & Kashmir",
+      "type": "UT",
+      "current_seats": 5,
+      "population": {
+        "2011": 12267013,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 33.5,
+        "lon": 75.3
+      },
+      "population_source": "derived_jk"
+    },
+    {
+      "code": "JH",
+      "name": "Jharkhand",
+      "type": "State",
+      "current_seats": 14,
+      "population": {
+        "2011": 32988134,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "eastern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 23.7,
+        "lon": 85.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "KA",
+      "name": "Karnataka",
+      "type": "State",
+      "current_seats": 28,
+      "population": {
+        "2011": 61095297,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 14.8,
+        "lon": 76.0
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "KL",
+      "name": "Kerala",
+      "type": "State",
+      "current_seats": 20,
+      "population": {
+        "2011": 33406061,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 10.5,
+        "lon": 76.4
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "LA",
+      "name": "Ladakh",
+      "type": "UT",
+      "current_seats": 1,
+      "population": {
+        "2011": 274289,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 34.2,
+        "lon": 77.6
+      },
+      "population_source": "derived_la"
+    },
+    {
+      "code": "LD",
+      "name": "Lakshadweep",
+      "type": "UT",
+      "current_seats": 1,
+      "population": {
+        "2011": 64473,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "none",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 10.6,
+        "lon": 72.6
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "MP",
+      "name": "Madhya Pradesh",
+      "type": "State",
+      "current_seats": 29,
+      "population": {
+        "2011": 72626809,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "central",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 23.5,
+        "lon": 78.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "MH",
+      "name": "Maharashtra",
+      "type": "State",
+      "current_seats": 48,
+      "population": {
+        "2011": 112374333,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "western",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 19.4,
+        "lon": 76.0
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "MN",
+      "name": "Manipur",
+      "type": "State",
+      "current_seats": 2,
+      "population": {
+        "2011": 2855794,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 24.7,
+        "lon": 93.9
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "ML",
+      "name": "Meghalaya",
+      "type": "State",
+      "current_seats": 2,
+      "population": {
+        "2011": 2966889,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 25.5,
+        "lon": 91.3
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "MZ",
+      "name": "Mizoram",
+      "type": "State",
+      "current_seats": 1,
+      "population": {
+        "2011": 1097206,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 23.3,
+        "lon": 92.8
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "NL",
+      "name": "Nagaland",
+      "type": "State",
+      "current_seats": 1,
+      "population": {
+        "2011": 1978502,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 26.1,
+        "lon": 94.4
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "OD",
+      "name": "Odisha",
+      "type": "State",
+      "current_seats": 21,
+      "population": {
+        "2011": 41974218,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "eastern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 20.5,
+        "lon": 84.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "PY",
+      "name": "Puducherry",
+      "type": "UT",
+      "current_seats": 1,
+      "population": {
+        "2011": 1247953,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 11.93,
+        "lon": 79.83
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "PB",
+      "name": "Punjab",
+      "type": "State",
+      "current_seats": 13,
+      "population": {
+        "2011": 27743338,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 31.0,
+        "lon": 75.4
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "RJ",
+      "name": "Rajasthan",
+      "type": "State",
+      "current_seats": 25,
+      "population": {
+        "2011": 68548437,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "northern",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 26.8,
+        "lon": 73.8
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "SK",
+      "name": "Sikkim",
+      "type": "State",
+      "current_seats": 1,
+      "population": {
+        "2011": 610577,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 27.6,
+        "lon": 88.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "TN",
+      "name": "Tamil Nadu",
+      "type": "State",
+      "current_seats": 39,
+      "population": {
+        "2011": 72147030,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 11.0,
+        "lon": 78.5
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "TS",
+      "name": "Telangana",
+      "type": "State",
+      "current_seats": 17,
+      "population": {
+        "2011": 35003674,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "southern",
+      "analytical_group": "south",
+      "label_point": {
+        "lat": 17.9,
+        "lon": 79.0
+      },
+      "population_source": "derived_ts"
+    },
+    {
+      "code": "TR",
+      "name": "Tripura",
+      "type": "State",
+      "current_seats": 2,
+      "population": {
+        "2011": 3673917,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "nec",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 23.8,
+        "lon": 91.7
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "UP",
+      "name": "Uttar Pradesh",
+      "type": "State",
+      "current_seats": 80,
+      "population": {
+        "2011": 199812341,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "central",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 27.0,
+        "lon": 80.8
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "UK",
+      "name": "Uttarakhand",
+      "type": "State",
+      "current_seats": 5,
+      "population": {
+        "2011": 10086292,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "central",
+      "analytical_group": "hindi",
+      "label_point": {
+        "lat": 30.1,
+        "lon": 79.2
+      },
+      "population_source": "prs"
+    },
+    {
+      "code": "WB",
+      "name": "West Bengal",
+      "type": "State",
+      "current_seats": 42,
+      "population": {
+        "2011": 91276115,
+        "1971": null,
+        "1981": null,
+        "1991": null,
+        "2001": null,
+        "2026_proj": null,
+        "2036_proj": null
+      },
+      "zonal_council": "eastern",
+      "analytical_group": "rest",
+      "label_point": {
+        "lat": 23.8,
+        "lon": 87.8
+      },
+      "population_source": "prs"
+    }
+  ]
+}
