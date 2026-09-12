@@ -361,5 +361,102 @@ function exactAllocateFloorOne(pairs, H) {
   ok("no divisor method exhibits it in the same range", divisorHits === 0, `${divisorHits} found`);
 }
 
+/* ---------------------------------------------------------------------------
+   15. Boundary geometry.
+
+   Section 2.1 of the build brief is a legal requirement, not a preference, so
+   it belongs in the test suite rather than in a script someone remembers to
+   run. If a future change to the boundary pipeline ever moves Aksai Chin
+   outside Ladakh, this fails.
+--------------------------------------------------------------------------- */
+section("15. Boundary geometry: joins to the unit list and satisfies the section 2.1 gate");
+{
+  let topo = null;
+  try {
+    topo = JSON.parse(readFileSync(new URL("../data/boundaries.topo.json", import.meta.url)));
+  } catch {
+    fail++;
+    console.log("  FAIL  data/boundaries.topo.json missing. Build it with: node scripts/build_boundaries.mjs");
+  }
+  if (topo) {
+    const geoms = topo.objects?.states?.geometries ?? [];
+    const geoCodes = geoms.map(g => g.properties.code).sort();
+    const unitCodes = units.map(u => u.code).sort();
+    ok("one geometry per unit, no orphans either way",
+       geoCodes.join(",") === unitCodes.join(","),
+       `geometry ${geoCodes.length} vs units ${unitCodes.length}`);
+
+    /* Decode the topology to lon/lat. Kept local so the test does not depend on
+       the build script it is checking. */
+    const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
+    const abs = topo.arcs.map(a => {
+      let x = 0, y = 0;
+      return a.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; });
+    });
+    const pickArc = i => (i < 0 ? abs[~i].slice().reverse() : abs[i]);
+    const ringOf = ix => {
+      const out = [];
+      for (const i of ix) { const p = pickArc(i); out.push(...(out.length ? p.slice(1) : p)); }
+      return out;
+    };
+    const shapes = geoms.map(g => ({
+      code: g.properties.code,
+      polys: g.type === "Polygon" ? [g.arcs.map(ringOf)] : g.arcs.map(p => p.map(ringOf)),
+    }));
+    const inRing = (r, lon, lat) => {
+      let inside = false;
+      for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+        const [xi, yi] = r[i], [xj, yj] = r[j];
+        if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+      }
+      return inside;
+    };
+    const hit = (lon, lat) => shapes.filter(s =>
+      s.polys.some(p => inRing(p[0], lon, lat) && !p.slice(1).some(h => inRing(h, lon, lat)))
+    ).map(s => s.code);
+
+    /* lat, lon, must-be-inside, and for the claimed territories the unit that
+       must own them. */
+    const PROBES = [
+      ["Gilgit (Gilgit-Baltistan)", 35.92, 74.31, true,  "LA"],
+      ["Skardu (Gilgit-Baltistan)", 35.30, 75.63, true,  "LA"],
+      ["Muzaffarabad (PoK)",        34.37, 73.47, true,  "JK"],
+      ["Mirpur (PoK)",              33.15, 73.75, true,  "JK"],
+      ["Aksai Chin interior",       35.20, 79.50, true,  "LA"],
+      ["Aksai Chin east",           35.10, 79.90, true,  "LA"],
+      ["Shaksgam Valley",           36.00, 76.50, true,  "LA"],
+      ["Srinagar",                  34.08, 74.80, true,  "JK"],
+      ["Leh (Ladakh)",              34.15, 77.58, true,  "LA"],
+      ["Tawang (Arunachal)",        27.59, 91.87, true,  "AR"],
+      ["Itanagar (Arunachal)",      27.08, 93.60, true,  "AR"],
+      ["Walong (east Arunachal)",   28.13, 97.00, true,  "AR"],
+      ["Kathmandu (Nepal)",         27.70, 85.30, false, null],
+      ["Lhasa (Tibet)",             29.65, 91.10, false, null],
+      ["Lahore (Pakistan)",         31.55, 74.34, false, null],
+    ];
+    let bad = [];
+    for (const [label, lat, lon, want, owner] of PROBES) {
+      const hits = hit(lon, lat);
+      const inside = hits.length > 0;
+      if (inside !== want) bad.push(`${label} expected ${want ? "in" : "out"}`);
+      else if (owner && !hits.includes(owner)) bad.push(`${label} owned by ${hits.join("/")} not ${owner}`);
+    }
+    ok(`all ${PROBES.length} section 2.1 probes pass on the built geometry`,
+       bad.length === 0, bad.join("; "));
+
+    /* Every polygon ring must close, or a renderer will fill it unpredictably. */
+    let open = 0;
+    for (const s of shapes) for (const p of s.polys) for (const r of p) {
+      if (r.length < 4 || r[0][0] !== r[r.length - 1][0] || r[0][1] !== r[r.length - 1][1]) open++;
+    }
+    ok("every ring is closed", open === 0, `${open} open rings`);
+
+    const kb = Buffer.byteLength(JSON.stringify(topo)) / 1024;
+    ok(`geometry is inside the 400 KB budget (${kb.toFixed(1)} KB)`, kb < 400);
+    ok("the cartographic note names its source and caveat",
+       Boolean(topo.source?.repository && topo.source?.provenance_caveat));
+  }
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
