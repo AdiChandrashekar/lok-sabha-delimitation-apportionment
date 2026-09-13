@@ -226,22 +226,6 @@ function renderChamber(rows) {
   }).join("") +
   `<p class="cl-foot">Share of the house under these rules, and the movement in
     percentage points against the ${543}-seat house as it stands today.</p>`;
-
-  /* A second, smaller chamber showing today, so the comparison is visual and
-     not only numeric. Only worth drawing when the scenario actually differs. */
-  const same = state.house === 543 &&
-    rows.every(r => r.absent || r.seats === r.current);
-  if (same) { $("chamber-compare").innerHTML = ""; return; }
-
-  const todayBlocs = buildBlocs(
-    rows.map(r => ({ ...r, seats: r.current, absent: false })), state.bloc, BLOC_COLOURS
-  ).map(b => ({ ...b, label: labelFor(b.id) }));
-  const host = $("chamber-compare");
-  host.innerHTML = `<div class="cc-head">The house as it stands today, for comparison</div>
-                    <div id="chamber-today" class="chamber chamber-small"></div>`;
-  drawChamber($("chamber-today"), layout(543), todayBlocs, {
-    width: 520, label: "seats today", sublabel: "",
-  });
 }
 
 /* ------------------------------------------------------------------ readout */
@@ -323,21 +307,6 @@ function renderStaticProse() {
     "used under CC BY 4.0 with attribution.";
 
   renderMembership($("group-membership"), D.units);
-  drawMastheadArc();
-}
-
-/* A quiet arc of seats behind the masthead: the same idea as the chamber, at
-   the scale of decoration rather than data. */
-function drawMastheadArc() {
-  const svg = $("masthead-arc");
-  if (!svg) return;
-  const { seats, seatRadius } = layout(543, { innerRatio: 0.3 });
-  const W = 1200, R = 520, cx = W / 2, cy = 258;
-  svg.innerHTML = seats.map((s, i) => {
-    const x = cx + s.x * R, y = cy + s.y * R;
-    if (y < -10) return "";
-    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(seatRadius * R * 0.8).toFixed(2)}"/>`;
-  }).join("");
 }
 
 /* --------------------------------------------------- paradox + quota panels */
@@ -392,7 +361,7 @@ function apply(pushHistory = false) {
 
   if (result.infeasible) {
     for (const id of ["headline", "blocks", "shares", "voteweight", "chamber",
-                      "chamber-legend", "chamber-compare"]) $(id).innerHTML = "";
+                      "chamber-legend"]) $(id).innerHTML = "";
     renderQuota(result);
     return;
   }

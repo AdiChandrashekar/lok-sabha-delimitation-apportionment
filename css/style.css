@@ -79,21 +79,23 @@ table, .num, input[type="number"], .blocks, .readout, .legend, .headline { font-
 
 /* ---------------------------------------------------------------- masthead */
 .masthead {
-  position: relative; overflow: hidden;
   background: var(--ink);
   color: #eef1f3;
-  padding: 30px 0 38px;
+  padding: 30px 0 34px;
   border-bottom: 4px solid var(--accent);
 }
-/* A quiet half-chamber behind the masthead. Decoration that is the same idea as
-   the data graphic below it, rather than unrelated ornament. */
-.masthead-art {
-  position: absolute; inset: auto 0 -52px 0; height: 260px;
-  opacity: .17; pointer-events: none;
+
+/* Author credit. Quiet in the masthead, conventional in the footer. */
+.credit { margin: 0; font-size: 13px; line-height: 1.6; }
+.credit-links { display: inline-flex; flex-wrap: wrap; gap: 4px 14px; margin-left: 10px; }
+.credit a { text-underline-offset: 2px; }
+.credit-masthead {
+  margin-top: 18px; padding-top: 14px; border-top: 1px solid #2c3842; color: #93a5b2;
 }
-.masthead-art svg { width: 100%; height: 100%; display: block; }
-.masthead-art circle { fill: #8fb8d4; }
-.masthead-inner { position: relative; }
+.credit-masthead a { color: #9ec6dd; }
+.credit-masthead a:hover { color: #d6e8f2; }
+.footer .credit { color: var(--ink-2); margin-bottom: 6px; }
+.footer .credit a { color: var(--accent); }
 
 .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
 .brand-mark { width: 34px; height: 21px; color: var(--brand-mark, #7fb0cf); flex: none; }
@@ -112,12 +114,12 @@ table, .num, input[type="number"], .blocks, .readout, .legend, .headline { font-
   font-weight: 500;
 }
 .standfirst {
-  margin: 0 0 18px; max-width: 60ch;
+  margin: 0 0 18px;
   font-family: var(--serif); font-weight: 300;
   font-size: clamp(15.5px, 1.9vw, 18.5px); line-height: 1.58; color: #cbd7df;
 }
 .status {
-  margin: 0 0 16px; max-width: 76ch; font-size: 13px; line-height: 1.5;
+  margin: 0 0 16px; font-size: 13px; line-height: 1.5;
   color: #93a5b2; border-left: 2px solid #3a4a57; padding-left: 12px;
 }
 .masthead-links { margin: 0; display: flex; gap: 18px; flex-wrap: wrap; }
@@ -146,7 +148,7 @@ table, .num, input[type="number"], .blocks, .readout, .legend, .headline { font-
 .preset:hover { background: #e2e7eb; }
 .preset.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
 .preset-caption {
-  margin: 10px 0 0; font-size: 13.5px; color: var(--ink-2); min-height: 1.4em; max-width: 80ch;
+  margin: 10px 0 0; font-size: 13.5px; color: var(--ink-2); min-height: 1.4em;
 }
 
 .control-grid {
@@ -176,7 +178,7 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 .check { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 11px; cursor: pointer; }
 .check input[type="checkbox"] { margin-top: 3px; accent-color: var(--accent); flex: none; }
 .check strong { display: block; font-size: 14px; font-weight: 600; }
-.check em { display: block; font-style: normal; font-size: 12.5px; color: var(--muted); line-height: 1.42; max-width: 66ch; }
+.check em { display: block; font-style: normal; font-size: 12.5px; color: var(--muted); line-height: 1.42; }
 .check-sub { margin: -4px 0 12px 26px; align-items: center; gap: 8px; }
 .check-sub label { font-size: 13px; margin: 0; }
 .check-sub input { width: 116px; }
@@ -230,7 +232,7 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
   margin: 0; font-family: var(--serif); font-size: 23px;
   font-weight: 500; letter-spacing: -0.01em;
 }
-.section-note { margin: 6px 0 14px; font-size: 13.5px; color: var(--muted); max-width: 82ch; }
+.section-note { margin: 6px 0 14px; font-size: 13.5px; color: var(--muted); }
 
 .viewtoggle { display: flex; border: 1px solid var(--rule); }
 .seg {
@@ -254,7 +256,6 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 }
 .chamber .hc-total-label { font-size: 12.5px; fill: var(--muted); letter-spacing: .02em; }
 .chamber .hc-sub { font-size: 11.5px; fill: var(--faint); }
-.chamber-small .hc-total { font-size: 26px; }
 
 .chamber-legend { font-size: 13px; }
 .cl-row {
@@ -271,12 +272,6 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 .cl-delta.down { color: var(--loss-4); font-weight: 600; }
 .cl-foot { margin: 10px 0 0; font-size: 11.5px; color: var(--faint); line-height: 1.45; }
 
-.chamber-compare { margin-top: 14px; }
-.cc-head { font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
-.chamber-compare .chamber {
-  background: var(--panel); border: 1px solid var(--rule); padding: 12px;
-  max-width: 560px;
-}
 
 /* --------------------------------------------------------------------- map */
 /* India in Mercator is taller than it is wide, so an unconstrained map runs
@@ -321,7 +316,7 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
   font-size: 13px; color: var(--ink-2); line-height: 1.45;
 }
 
-.carto { font-size: 12px; color: var(--faint); margin: 10px 0 0; max-width: 90ch; line-height: 1.45; }
+.carto { font-size: 12px; color: var(--faint); margin: 10px 0 0; line-height: 1.45; }
 
 /* ------------------------------------------------------------------ blocks */
 .blocks { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); }
@@ -388,7 +383,7 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 #table td.down { color: var(--loss-4); font-weight: 600; }
 
 /* ------------------------------------------------------------------- prose */
-.prose { max-width: 74ch; margin: 44px 0 0; }
+.prose { margin: 44px 0 0; }
 .prose h2 { margin: 0 0 12px; }
 .prose h3 {
   margin: 28px 0 7px; font-family: var(--sans);
@@ -449,7 +444,7 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 }
 .doc-nav a:hover { color: var(--accent); border-left-color: var(--accent); }
 
-.doc { max-width: 70ch; padding-bottom: 30px; }
+.doc { padding-bottom: 30px; }
 .doc-kicker { margin: 0 0 4px; font-size: 12.5px; color: var(--muted); }
 .doc h1 {
   margin: 0 0 14px; font-family: var(--serif); font-weight: 500;
@@ -537,15 +532,23 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 .demo-note .warn { color: #8c4a08; font-weight: 600; }
 
 @media (max-width: 900px) {
-  .doc-layout { grid-template-columns: 1fr; gap: 22px; }
-  .doc-nav { position: static; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
+  /* minmax(0, 1fr), not 1fr: a bare 1fr track has an automatic minimum and
+     lets the multi-column contents list force it wider than the viewport,
+     which scrolled the whole page sideways on phones. */
+  .doc-layout { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .doc-nav { position: static; min-width: 0; border-bottom: 1px solid var(--rule); padding-bottom: 14px; }
   .doc-nav ol { columns: 2; column-gap: 20px; }
   .doc-cols { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .doc-nav ol { columns: 1; }
+  .doc h2 { font-size: 23px; margin-top: 38px; }
+  .doc p, .doc li { font-size: 15.5px; }
 }
 
 /* ------------------------------------------------------------------ footer */
 .footer { margin-top: 50px; padding: 24px 0 44px; border-top: 1px solid var(--rule); }
-.footer p { margin: 0; font-size: 12.5px; color: var(--muted); max-width: 90ch; line-height: 1.5; }
+.footer p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 .footer-brand {
   font-family: var(--serif) !important; font-size: 15px !important;
   color: var(--ink) !important; margin-bottom: 6px !important;
@@ -567,8 +570,17 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 }
 @media (max-width: 620px) {
   .wrap { padding: 0 14px; }
-  .masthead { padding: 22px 0 28px; }
-  .masthead-art { height: 170px; bottom: -34px; }
+  .masthead { padding: 22px 0 26px; }
+  /* Credit links drop under the credit line rather than wrapping mid-sentence. */
+  .credit-links { display: flex; margin: 4px 0 0; }
+  /* A three-way toggle cannot share one 347px row without every label breaking
+     across two lines, so it stacks. The two-way chamber toggle still fits. */
+  .viewtoggle:has(.seg:nth-child(3)) { flex-direction: column; }
+  .viewtoggle:has(.seg:nth-child(3)) .seg + .seg { border-left: 0; border-top: 1px solid var(--rule); }
+  .viewtoggle:has(.seg:nth-child(3)) .seg { text-align: left; padding: 9px 12px; }
+  .preset-buttons { gap: 6px; }
+  .preset { flex: 1 1 auto; text-align: center; }
+  .status { padding-left: 10px; }
   .chamber-wrap { padding: 12px; }
   .cl-row { grid-template-columns: 12px 1fr auto auto; gap: 7px; font-size: 12.5px; }
   .cl-share { display: none; }

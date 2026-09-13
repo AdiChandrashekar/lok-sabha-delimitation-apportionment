@@ -27,7 +27,8 @@
       "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\khammam_mandals.py\" 2>&1)",
       "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\retained_villages.py\" 2>&1)",
       "PowerShell(python \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\findvill.py\")",
-      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\diag_baseprop.mjs\")"
+      "PowerShell(node \"C:\\\\Users\\\\adich\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-adich-Desktop-Claude-Code-India-Map-Visualisations-Delimitation\\\\62a4a74c-b80f-45a7-b56e-e199b3bcbf82\\\\scratchpad\\\\diag_baseprop.mjs\")",
+      "Bash(perl -i -pe 's/ max-width: \\(60|66|70|74|76|80|82|90\\)ch;//g' css/style.css)"
     ]
   }
 }
