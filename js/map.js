@@ -42,6 +42,20 @@ export const MODES = {
     note: "A vote's weight against the national average. Orange means a vote there counts for less than average; blue means it counts for more. Measured on a doubling scale, so ×2 and ÷2 sit equally far from the middle.",
     legendEnds: ["half an average vote", "parity", "twice an average vote"],
   },
+  wchange: {
+    label: "Vote Weight Change Against Current",
+    /* The ratio of a vote's weight under these rules to its weight today, on
+       the same doubling scale as the weight view, so a vote that goes from
+       half an average vote to parity reads as strongly as one going the other
+       way. Orange means the vote there loses weight. */
+    value: r => (r.voteWeight > 0 && r.voteWeightNow > 0 ? Math.log2(r.voteWeight / r.voteWeightNow) : null),
+    /* Scaled to the largest movement, but capped at one doubling so a
+       two-seat union territory dropping to one cannot wash out every state. */
+    domain: vs => Math.min(1, Math.max(0.1, ...vs.map(Math.abs))),
+    format: v => (v >= 0 ? "×" : "÷") + Math.pow(2, Math.abs(v)).toFixed(2),
+    note: "How much a vote there gains or loses in weight under these rules, against what it is worth today. Blue means the vote counts for more than it does now; orange means it counts for less. The house as it stands shows no change anywhere.",
+    legendEnds: null,
+  },
   abs: {
     label: "Seats Gained or Lost",
     value: r => r.change,
@@ -51,7 +65,7 @@ export const MODES = {
     legendEnds: null,
   },
   prop: {
-    label: "Change Against Current",
+    label: "Seat Change Against Current",
     value: r => r.pctChange,
     domain: vs => Math.max(0.02, ...vs.map(Math.abs)),
     format: v => (v > 0 ? "+" : "") + Math.round(v * 100) + "%",
