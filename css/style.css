@@ -291,17 +291,42 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
   stroke: #ffffff; stroke-width: .7; stroke-linejoin: round;
   vector-effect: non-scaling-stroke; cursor: pointer;
 }
-#map path.unit:focus-visible { outline: none; }
-/* Highlight outlines live in their own layer on top (see map.js), so every
+/* No browser focus ring or tap flash: both draw a rectangle round the shape's
+   bounding box, which on a state as ragged as Madhya Pradesh looks broken.
+   Keyboard focus is shown instead by an outline that follows the border. */
+#map { -webkit-tap-highlight-color: transparent; }
+#map path.unit:focus, #map path.unit:focus-visible { outline: none; }
+/* The hover outline lives in its own layer on top (see map.js), so every
    edge of a highlighted state shows the full stroke, shared border or coast. */
 #map path.hl {
   fill: none; pointer-events: none; stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
-#map path.hl-select { stroke: var(--ink); stroke-width: 2; }
 #map path.hl-hover { stroke: var(--ink); stroke-width: 2; }
 #map path.hl-hover.is-focus { stroke: var(--focus); stroke-width: 2.4; }
-#map path.unit.is-absent { fill: url(#hatch) !important; }
+#map path.unit.is-absent, #map path.lifted.is-absent { fill: url(#hatch) !important; }
+
+/* Selecting a state lifts it: a copy grows toward the centre while the rest of
+   India recedes — faded, desaturated, slightly out of focus and set back. */
+#map .sea { fill: transparent; }
+#map .stage { transform-box: view-box; transform-origin: 50% 48%; }
+#map svg.has-selection .stage { opacity: .3; filter: grayscale(.8) blur(1.4px); transform: scale(.95); }
+/* The hole the state leaves behind. */
+#map svg.has-selection path.unit.is-selected { fill: var(--panel) !important; }
+#map path.lifted {
+  stroke: #ffffff; stroke-width: 1.2; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke; cursor: zoom-out;
+}
+#map .lift.is-lifted path.lifted { filter: drop-shadow(0 10px 16px rgba(22, 25, 28, .26)); }
+#map .lift-name {
+  font-family: var(--sans); font-size: 22px; font-weight: 600; fill: var(--ink);
+  pointer-events: none;
+}
+/* The label is sized in map units, so on a phone the map's shrink would take it
+   down to about 10px. Compensate so it still reads at roughly 17px. */
+@media (max-width: 620px) {
+  #map .lift-name { font-size: 38px; }
+}
 
 .legend { margin: 8px 4px 2px; font-size: 12px; color: var(--muted); }
 .legend .swatches { display: flex; gap: 0; margin: 5px 0 4px; }
@@ -606,7 +631,9 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  #map path.unit { transition: fill 180ms ease, stroke-width 120ms ease; }
+  #map path.unit, #map path.lifted { transition: fill 180ms ease; }
+  #map .stage { transition: opacity 420ms ease, filter 420ms ease, transform 560ms cubic-bezier(.2, .7, .2, 1); }
+  #map .lift path.lifted { transition: fill 180ms ease, filter 360ms ease; }
   .share-fill { transition: width 220ms ease; }
   .preset, .btn, .seg { transition: background-color 120ms ease; }
 }
