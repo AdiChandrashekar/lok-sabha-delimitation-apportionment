@@ -108,12 +108,12 @@ def build(width, height, path, compact=False):
            "DELIMITATION VISUALISER", font=fb2, fill=(178, 195, 208))
 
     ft = font("IBMPlexSerif-Medium.ttf", 88 if not compact else 58)
-    d.text((pad, pad + 46), "Who gets the seats", font=ft, fill=(240, 243, 245))
+    d.text((pad, pad + 46), "The Frozen House", font=ft, fill=(240, 243, 245))
 
     fs = font("IBMPlexSerif-Regular.ttf", 26 if not compact else 21)
     y = pad + (156 if not compact else 116)
     for ln in ["Seats have been frozen on the 1971 Census since 1976.",
-               "Unfreezing them is not one calculation with one answer."]:
+               "When the freeze lifts, some rule has to decide."]:
         d.text((pad, y), ln, font=fs, fill=(188, 203, 214))
         y += 36 if not compact else 30
 

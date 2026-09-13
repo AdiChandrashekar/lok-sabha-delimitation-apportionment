@@ -21,7 +21,7 @@ const ABSENT = "#cfd3d6";
 
 export const MODES = {
   weight: {
-    label: "What a vote is worth",
+    label: "What a Vote Is Worth",
     /* Vote weight is a RATIO, so it has to be measured on a log scale: 2.00 and
        0.50 are equally far from parity and a linear scale would hide the whole
        under-represented half against Lakshadweep's 34. Neutral is parity. */
@@ -36,7 +36,7 @@ export const MODES = {
     legendEnds: ["half an average vote", "parity", "twice an average vote"],
   },
   abs: {
-    label: "Seats gained or lost",
+    label: "Seats Gained or Lost",
     value: r => r.change,
     domain: vs => Math.max(1, ...vs.map(Math.abs)),
     format: v => (v > 0 ? "+" : "") + Math.round(v) + " seats",
@@ -44,7 +44,7 @@ export const MODES = {
     legendEnds: null,
   },
   prop: {
-    label: "Change against current",
+    label: "Change Against Current",
     value: r => r.pctChange,
     domain: vs => Math.max(0.02, ...vs.map(Math.abs)),
     format: v => (v > 0 ? "+" : "") + Math.round(v * 100) + "%",
@@ -96,18 +96,35 @@ export function createMap(container, geo, { onHover, onSelect }) {
     .attr("tabindex", 0)
     .attr("role", "button");
 
+  /* Highlights are drawn as copies of the outline in a layer ABOVE every unit.
+     Stroking the unit itself does not work: a stroke is centred on the edge, and
+     any neighbour painted later covers the inner half of it, so shared borders
+     came out at half the width of coastlines and the international border.
+     The layer takes no pointer events, so it never steals the hover. */
+  const hl = svg.append("g").attr("class", "hl-layer").attr("aria-hidden", "true");
+  const selectLine = hl.append("path").attr("class", "hl hl-select");
+  const hoverLine = hl.append("path").attr("class", "hl hl-hover");
+  const byId = new Map(geo.features.map(f => [f.id, path(f)]));
+  const outline = (line, code) => line.attr("d", code ? byId.get(code) : null);
+
   let selected = null;
   const setSelected = code => {
     selected = code;
     paths.classed("is-selected", d => d.id === code);
+    outline(selectLine, code);
     onSelect(code);
+  };
+  const setHover = (code, focus = false) => {
+    outline(hoverLine, code);
+    hoverLine.classed("is-focus", focus);
+    onHover(code);
   };
 
   paths
-    .on("pointerenter", (e, d) => onHover(d.id))
-    .on("pointerleave", () => onHover(null))
-    .on("focus", (e, d) => onHover(d.id))
-    .on("blur", () => onHover(null))
+    .on("pointerenter", (e, d) => setHover(d.id))
+    .on("pointerleave", () => setHover(null))
+    .on("focus", (e, d) => setHover(d.id, e.target.matches(":focus-visible")))
+    .on("blur", () => setHover(null))
     .on("click", (e, d) => setSelected(selected === d.id ? null : d.id))
     .on("keydown", (e, d) => {
       if (e.key === "Enter" || e.key === " ") {

@@ -26,19 +26,19 @@ const DEFAULTS = {
 
 /* Presets encode arguments, so each carries a caption saying what it shows. */
 const PRESETS = [
-  { id: "today", label: "The house today", state: { house: 543, method: "hare", year: "2011" },
+  { id: "today", label: "The House Today", state: { house: 543, method: "hare", year: "2011" },
     caption: "543 seats allocated in proportion to the 2011 Census. This is what the freeze is holding back: the south loses 17 seats, the Hindi-belt gains 23." },
-  { id: "freeze", label: "The freeze, as a constraint", state: { house: 543, method: "hare", year: "2011", maxChange: 0 },
+  { id: "freeze", label: "The Freeze, as a Constraint", state: { house: 543, method: "hare", year: "2011", maxChange: 0 },
     caption: "Cap every state at zero change and you reproduce the current house exactly. The freeze is not a population rule at all — it is a rule about not moving." },
-  { id: "bill2026", label: "The 2026 bill", state: { house: 815, method: "hare", year: "2011" },
+  { id: "bill2026", label: "The 2026 Bill", state: { house: 815, method: "hare", year: "2011" },
     caption: "815 seats from the states, the figure in the Constitution (131st Amendment) Bill, 2026, allocated proportionally on 2011 population. The bill was negatived on 17 April 2026." },
-  { id: "shah", label: "The uniform +50% offer", state: { house: 815, method: "statusQuo", year: "2011" },
+  { id: "shah", label: "The Uniform +50% Offer", state: { house: 815, method: "statusQuo", year: "2011" },
     caption: "Every state's seats scaled up by the same proportion, the arrangement reported to have been offered during the April debate. Nobody's share moves at all — which is exactly why it resolves nothing about representation." },
-  { id: "nobody", label: "Nobody loses", state: { house: 815, method: "hare", year: "2011", protectAll: true },
+  { id: "nobody", label: "Nobody Loses", state: { house: 815, method: "hare", year: "2011", protectAll: true },
     caption: "Grow the house to 815 and forbid any state from losing a seat. It is feasible — but only because the house grows by half. Try it at 543 and nothing moves at all." },
-  { id: "phased", label: "A phased transition", state: { house: 600, method: "hare", year: "2011", maxChange: 2 },
+  { id: "phased", label: "A Phased Transition", state: { house: 600, method: "hare", year: "2011", maxChange: 2 },
     caption: "Cap every state at two seats of movement. The south ends up with MORE seats than it holds today. The cap, not the house size, is what does the protecting." },
-  { id: "y2036", label: "On 2036 projections", state: { house: 543, method: "hare", year: "2036_proj" },
+  { id: "y2036", label: "On 2036 Projections", state: { house: 543, method: "hare", year: "2036_proj" },
     caption: "The same rule on the official 2036 projection. The southern loss roughly doubles, from 17 seats to 30. Every published projection quotes the 2011 figure." },
 ];
 

@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lok Sabha Delimitation Visualiser — who gets the seats</title>
+<title>The Frozen House — Lok Sabha Delimitation Visualiser</title>
 <meta name="description" content="Set the rules of Lok Sabha seat apportionment and see who gains and who loses. Seven allocation rules, five censuses, official projections to 2036, every figure traceable to source.">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lok Sabha Delimitation Visualiser">
 <meta property="og:title" content="Lok Sabha Delimitation Visualiser">
-<meta property="og:description" content="Seats have been frozen on the 1971 Census since 1976. Unfreezing them is not one calculation with one answer. Set the rules yourself.">
+<meta property="og:description" content="Lok Sabha seats have been frozen on the 1971 Census since 1976. When the freeze lifts, some rule has to turn people into seats, and the rules are not equivalent.">
 <!-- og:image must be an ABSOLUTE url: most scrapers will not resolve a relative
      one, and a relative path here silently produces a card with no image. -->
 <meta property="og:url" content="https://adichandrashekar.github.io/lok-sabha-delimitation-apportionment/">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="A hemicycle of 543 dots, one per Lok Sabha seat, coloured by region.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lok Sabha Delimitation Visualiser">
-<meta name="twitter:description" content="Seven allocation rules disagree by dozens of seats. Choosing between them is a political choice wearing the costume of arithmetic.">
+<meta name="twitter:description" content="Lok Sabha seats have been frozen on the 1971 Census since 1976. When the freeze lifts, some rule has to turn people into seats, and the rules are not equivalent.">
 <meta name="twitter:image" content="https://adichandrashekar.github.io/lok-sabha-delimitation-apportionment/assets/social-card.png">
 <meta name="theme-color" content="#141a20">
 
@@ -50,13 +50,15 @@
       <p class="brand-name"><span>Lok Sabha</span> Delimitation Visualiser</p>
     </div>
 
-    <h1>Who gets the seats</h1>
+    <h1>The Frozen House</h1>
     <p class="standfirst">
-      Lok Sabha seats have been frozen on the 1971 Census since 1976. Unfreezing
-      them is not one calculation with one answer. Proportional allocation can be
-      implemented by at least six established rules, they disagree by dozens of
-      seats for large states, and choosing between them is a political choice
-      wearing the costume of arithmetic. Set the rules yourself.
+      Lok Sabha seats have been frozen on the 1971 Census since 1976. India has added
+      roughly 800 million people since. When the freeze lifts, those people have to be
+      converted into seats by some rule. Article 81 requires that the ratio between
+      population and seats be "so far as practicable" the same for every state. There
+      are different ways to do this and they are not equivalent. This proportional
+      allocation is a political choice. This tool shows you some ways that choice can
+      be made.
     </p>
     <p class="status" id="status-line">
       Status as at 13 September 2026. The Constitution (131st Amendment) Bill, 2026 was
@@ -180,10 +182,10 @@
   <!-- ------------------------------------------------- the chamber ---- -->
   <section class="chamber-section">
     <div class="section-head">
-      <h2>The chamber</h2>
+      <h2>The Chamber</h2>
       <div class="viewtoggle" role="group" aria-label="Colour the chamber by">
-        <button type="button" class="seg is-on" data-bloc="group" aria-pressed="true">Analytical blocs</button>
-        <button type="button" class="seg" data-bloc="zonal" aria-pressed="false">Zonal councils</button>
+        <button type="button" class="seg is-on" data-bloc="group" aria-pressed="true">Analytical Blocs</button>
+        <button type="button" class="seg" data-bloc="zonal" aria-pressed="false">Zonal Councils</button>
       </div>
     </div>
     <p class="section-note" id="chamber-note"></p>
@@ -197,11 +199,11 @@
   <!-- ------------------------------------------------------------------ -->
   <section class="map-section">
     <div class="section-head">
-      <h2>The map</h2>
+      <h2>The Map</h2>
       <div class="viewtoggle" role="group" aria-label="Colour the map by">
-        <button type="button" class="seg is-on" data-view="weight" aria-pressed="true">What a vote is worth</button>
-        <button type="button" class="seg" data-view="abs" aria-pressed="false">Seats gained or lost</button>
-        <button type="button" class="seg" data-view="prop" aria-pressed="false">Change against current</button>
+        <button type="button" class="seg is-on" data-view="weight" aria-pressed="true">What a Vote Is Worth</button>
+        <button type="button" class="seg" data-view="abs" aria-pressed="false">Seats Gained or Lost</button>
+        <button type="button" class="seg" data-view="prop" aria-pressed="false">Change Against Current</button>
       </div>
     </div>
     <p class="section-note" id="view-note"></p>
@@ -222,7 +224,7 @@
 
   <!-- ------------------------------------------------------------------ -->
   <section class="blocks-section">
-    <div class="section-head"><h2>Every seat</h2></div>
+    <div class="section-head"><h2>Every Seat</h2></div>
     <p class="section-note">
       One square per seat. Solid squares are seats the state holds under these rules.
       Hollow squares outlined in orange are seats it holds today and would lose.
@@ -233,7 +235,7 @@
   <!-- ------------------------------------------------------------------ -->
   <section class="panels">
     <div class="panel">
-      <h2>Share of the house</h2>
+      <h2>Share of the House</h2>
       <p class="section-note">
         The bar is the new share. The notch is the share today.
         <strong>These groupings are analytical, not official.</strong>
@@ -244,7 +246,7 @@
     </div>
 
     <div class="panel">
-      <h2>What a vote is worth</h2>
+      <h2>What a Vote Is Worth</h2>
       <p class="section-note">
         People per MP against the national average, where 1.00 is average. Above 1.00
         means a vote there carries more weight than the average vote.
@@ -256,7 +258,7 @@
   <!-- ------------------------------------------------------------------ -->
   <section class="table-section">
     <div class="section-head">
-      <h2>Every unit</h2>
+      <h2>Every Unit</h2>
       <button type="button" class="btn" id="export-csv">Download CSV</button>
     </div>
     <p class="section-note">Click a column heading to sort.</p>
@@ -279,7 +281,7 @@
       only that it does.
     </p>
 
-    <h3>What the tool does</h3>
+    <h3>What the Tool Does</h3>
     <p>
       It takes a population figure for each of India's 36 states and union territories,
       a house size, an allocation rule and any constraints, and returns a whole number of
@@ -290,10 +292,10 @@
       exception is applied by hand to four units.
     </p>
 
-    <h3>The rules</h3>
+    <h3>The Rules</h3>
     <div id="method-table"></div>
 
-    <h3>The Alabama paradox</h3>
+    <h3>The Alabama Paradox</h3>
     <p>
       Largest remainder — the rule behind essentially every published delimitation
       projection — can take a seat away from a state when the house <em>grows</em>. This is
@@ -320,10 +322,10 @@
     </p>
     <div id="quota-report"></div>
 
-    <h3>The data</h3>
+    <h3>The Data</h3>
     <div id="data-report"></div>
 
-    <h3>Known limits</h3>
+    <h3>Known Limits</h3>
     <ul>
       <li>The 2016–2036 series are <em>projections</em>, made in 2019 and published in 2020.
           They predate both the 2027 Census and COVID-19 mortality.</li>

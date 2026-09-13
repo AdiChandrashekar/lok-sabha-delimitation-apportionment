@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------------
-   Who gets the seats. Cool, precise, slightly austere: the subject is
+   The Frozen House. Cool, precise, slightly austere: the subject is
    constitutional arithmetic and contested federalism, so the page is quiet and
    the map is the only loud thing on it.
 
@@ -287,10 +287,20 @@ select:hover, input[type="number"]:hover { border-color: var(--faint); }
   padding: 6px; max-width: 700px;
 }
 #map svg { display: block; width: 100%; height: auto; }
-#map path.unit { stroke: #ffffff; stroke-width: .7; cursor: pointer; }
-#map path.unit:hover { stroke: var(--ink); stroke-width: 1.6; }
-#map path.unit:focus-visible { stroke: var(--focus); stroke-width: 2.4; outline: none; }
-#map path.unit.is-selected { stroke: var(--ink); stroke-width: 2; }
+#map path.unit {
+  stroke: #ffffff; stroke-width: .7; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke; cursor: pointer;
+}
+#map path.unit:focus-visible { outline: none; }
+/* Highlight outlines live in their own layer on top (see map.js), so every
+   edge of a highlighted state shows the full stroke, shared border or coast. */
+#map path.hl {
+  fill: none; pointer-events: none; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+#map path.hl-select { stroke: var(--ink); stroke-width: 2; }
+#map path.hl-hover { stroke: var(--ink); stroke-width: 2; }
+#map path.hl-hover.is-focus { stroke: var(--focus); stroke-width: 2.4; }
 #map path.unit.is-absent { fill: url(#hatch) !important; }
 
 .legend { margin: 8px 4px 2px; font-size: 12px; color: var(--muted); }

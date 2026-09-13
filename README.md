@@ -1,6 +1,6 @@
 # Lok Sabha Delimitation Visualiser
 
-### Who gets the seats
+### The Frozen House
 
 **Live: https://adichandrashekar.github.io/lok-sabha-delimitation-apportionment/**
 

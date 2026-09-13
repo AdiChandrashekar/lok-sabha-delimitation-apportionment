@@ -114,7 +114,7 @@ export function render(el, { seats, seatRadius }, blocs, opts = {}) {
     : "";
 
   el.innerHTML =
-    `<svg viewBox="0 0 ${width} ${height}" width="100%" height="auto" role="img"
+    `<svg viewBox="0 0 ${width} ${height}" width="100%" role="img"
           aria-label="${total} seats arranged as a chamber. ${
             blocs.map(b => `${b.label ?? b.id}: ${b.seats}`).join(". ")}.">
        ${circles}${centre}
