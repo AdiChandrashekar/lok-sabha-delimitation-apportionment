@@ -23,8 +23,12 @@ PAPER = (242, 243, 244)
 MUTED = (147, 165, 178)
 BRAND = (127, 176, 207)
 RULE = (58, 74, 87)
-BLOC = {"south": (23, 96, 122), "hindi": (179, 114, 42), "rest": (107, 122, 134)}
-ORDER = ["south", "rest", "hindi"]
+# Must match GROUP_ORDER, GROUP_LABELS and BLOC_COLOURS in js/data.js.
+BLOC = {"south": (23, 96, 122), "west": (93, 138, 58), "north": (168, 82, 125),
+        "hindi": (179, 114, 42), "east": (79, 111, 168), "northeast": (192, 86, 58)}
+LABELS = {"south": "South", "west": "West", "north": "Punjab & J&K",
+          "hindi": "Hindi-belt", "east": "East", "northeast": "North-East"}
+ORDER = ["south", "west", "north", "hindi", "east", "northeast"]
 
 
 def font(name, size):
@@ -120,7 +124,7 @@ def build(width, height, path, compact=False):
     # The bloc key sits ABOVE the arc, in clear space. Putting it at the foot
     # left it sitting on top of the seats and unreadable.
     fk = font("FiraSans-Regular.ttf", 19 if not compact else 16)
-    keys = [("South", BLOC["south"]), ("Everywhere else", BLOC["rest"]), ("Hindi-belt", BLOC["hindi"])]
+    keys = [(LABELS[g], BLOC[g]) for g in ORDER]
     ky = y + (16 if not compact else 12)
     kx = pad
     for label, col in keys:
@@ -130,9 +134,11 @@ def build(width, height, path, compact=False):
     d.text((width - pad - d.textlength(f"{total} seats today", font=fk), ky),
            f"{total} seats today", font=fk, fill=MUTED)
 
-    # Chamber bled off the bottom edge, its crown clear of the key above it.
-    R = width * (0.44 if not compact else 0.50)
-    top = ky + (46 if not compact else 34)
+    # The WHOLE half-circle fits below the key. Bleeding it off the bottom edge
+    # looked grander, but with six blocs it cut the two at the far right end of
+    # the arc out of the picture while the key still listed them.
+    top = ky + (44 if not compact else 34)
+    R = min(width * (0.44 if not compact else 0.46), height - top - (22 if not compact else 40))
     draw_chamber(d, width / 2, top + R, R, totals)
 
     img.save(path, "PNG", optimize=True)

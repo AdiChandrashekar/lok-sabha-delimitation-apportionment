@@ -3,14 +3,14 @@
    The export matters: it is what turns this from a thing people look at into a
    thing people cite.
 --------------------------------------------------------------------------- */
-import { fmt, GROUP_LABELS, groupTotals } from "./data.js";
+import { fmt, GROUP_LABELS, GROUP_ORDER, BLOC_COLOURS, groupTotals } from "./data.js";
 
 /* ------------------------------------------------------------- share panel */
 export function renderShares(el, rows, houseSize) {
   const g = groupTotals(rows);
   const live = rows.filter(r => !r.absent).reduce((a, r) => a + r.seats, 0) || houseSize;
 
-  el.innerHTML = ["south", "hindi", "rest"].map(key => {
+  el.innerHTML = GROUP_ORDER.map(key => {
     const now = g[key].current / 543;
     const next = g[key].seats / live;
     const delta = next - now;
@@ -35,9 +35,10 @@ export function renderShares(el, rows, houseSize) {
 }
 
 export function renderMembership(el, units) {
-  el.innerHTML = ["south", "hindi", "rest"].map(key => {
+  el.innerHTML = GROUP_ORDER.map(key => {
     const names = units.filter(u => u.analytical_group === key).map(u => u.name).sort();
-    return `<p><b>${GROUP_LABELS[key]}:</b> ${names.join(", ")}.</p>`;
+    return `<p><span class="cl-dot" style="background:${BLOC_COLOURS[key]}"></span>
+      <b>${GROUP_LABELS[key]}:</b> ${names.join(", ")}.</p>`;
   }).join("") +
   `<p class="fine">These are analytical groupings chosen for this tool. They are not
    official and carry no legal status. The official grouping in <code>units.json</code>

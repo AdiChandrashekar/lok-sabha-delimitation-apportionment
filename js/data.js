@@ -32,7 +32,22 @@ export const YEAR_NOTES = {
   "2036_proj": "Official projection. The southern loss here is roughly double the loss on 2011 numbers.",
 };
 
-export const GROUP_LABELS = { south: "South", hindi: "Hindi-belt", rest: "Everywhere else" };
+/* Analytical blocs, NOT official. The delimitation argument divides along
+   language more than along party lines, which shift from one election to the
+   next: the Hindi-speaking heartland gains seats from any population rule, and
+   every non-Hindi region it gains them from has its own stake in the fight.
+   The south leads the opposition to delimitation. Maharashtra and Gujarat are
+   large and roughly hold their ground. West Bengal and Odisha lose share. The
+   North-East's small states live on the one-seat minimum. Punjab and Jammu &
+   Kashmir are border regions with their own grievances: Punjab joined the
+   southern states' coalition against delimitation, and Jammu & Kashmir went
+   through its own contested redrawing in 2022. The order is a sweep round
+   the map, which is also the order the blocs take across the chamber. */
+export const GROUP_ORDER = ["south", "west", "north", "hindi", "east", "northeast"];
+export const GROUP_LABELS = {
+  south: "South", west: "West", north: "Punjab & J&K",
+  hindi: "Hindi-belt", east: "East", northeast: "North-East",
+};
 
 /* Zonal councils are OFFICIAL, unlike the analytical grouping above: they come
    from the States Reorganisation Act 1956 and the North Eastern Council Act
@@ -47,7 +62,11 @@ export const ZONE_LABELS = {
 /* Categorical fills for the chamber. Distinct in hue rather than only in
    lightness, so they survive greyscale and the common colour-blindness types. */
 export const BLOC_COLOURS = {
-  south: "#17607a", hindi: "#b3722a", rest: "#6b7a86",
+  /* Analytical blocs, chosen so neighbours across the chamber never share a
+     hue family. */
+  south: "#17607a", west: "#5d8a3a", north: "#a8527d",
+  hindi: "#b3722a", east: "#4f6fa8", northeast: "#c0563a",
+  /* Zonal councils. */
   southern: "#17607a", northern: "#7a5aa0", central: "#b3722a",
   eastern: "#c0563a", western: "#3f7d5e", nec: "#d2a02e", none: "#98a2aa",
 };
@@ -148,7 +167,7 @@ export function buildRows(units, result, year) {
 
 export function groupTotals(rows) {
   const out = {};
-  for (const g of ["south", "hindi", "rest"]) {
+  for (const g of GROUP_ORDER) {
     const rs = rows.filter(r => r.group === g && !r.absent);
     out[g] = {
       seats: rs.reduce((a, r) => a + r.seats, 0),

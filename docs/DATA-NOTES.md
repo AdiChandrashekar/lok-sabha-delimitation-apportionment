@@ -72,10 +72,14 @@ would change the output of every rule with a per-unit minimum.
 
 Two groupings are provided. `zonal_council` follows the States Reorganisation
 Act 1956 and the North Eastern Council Act 1971, and is official.
-`analytical_group` is a south, Hindi-belt, everywhere-else split that exists
-only to drive the regional share panel. It is not official and the interface
-must say so wherever it appears. Under the current allocation the analytical
-split is 130 seats south, 225 Hindi-belt, 188 elsewhere.
+`analytical_group` is a six-bloc split — south, west, north (Punjab, Jammu &
+Kashmir, Ladakh, Chandigarh), hindi, east, northeast — that drives the regional
+share panel and the chamber's colouring. It is not official and the interface
+must say so wherever it appears. Under the current allocation the split is 131
+seats south, 78 west, 20 Punjab & J&K, 225 Hindi-belt, 64 east and 25
+North-East. (Until September 2026 this was a three-way south / Hindi-belt /
+everywhere-else split of 130 / 225 / 188, which the phase reports record;
+Lakshadweep moved into the south when the split was refined.)
 
 ## Findings already established, with their test assertions
 

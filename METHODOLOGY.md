@@ -282,8 +282,10 @@ has not been found.
 - The 2016–2036 series are **projections**, made in 2019 and published in 2020.
   They predate both the 2027 Census and COVID-19 mortality.
 - Projected figures carry up to ±500 from thousands-rounding.
-- Regional groupings (south / Hindi-belt / everywhere else) drive one panel and
-  are **not official**. The official grouping carried in `units.json` is zonal
+- Regional blocs (South, West, Punjab & J&K, Hindi-belt, East, North-East)
+  drive the share panel and colour the chamber, and are **not official**. They
+  follow language and region rather than party, since the delimitation argument
+  divides that way and party alignments change between elections. The official grouping carried in `units.json` is zonal
   council membership, which cuts differently. Membership of the analytical
   groups is listed in the interface.
 - Vote weight is people per MP against the national average. The smallest units

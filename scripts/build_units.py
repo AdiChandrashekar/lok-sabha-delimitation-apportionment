@@ -8,42 +8,42 @@ import json, sys, os
 
 # code, name, type, seats, pop2011, zone, group, lat, lon, pop_source_key
 U = [
- ("AN","Andaman & Nicobar Islands","UT",   1,    380581,"none",       "rest", 11.70, 92.70,"prs"),
+ ("AN","Andaman & Nicobar Islands","UT",   1,    380581,"none",       "east", 11.70, 92.70,"prs"),
  ("AP","Andhra Pradesh","State",         25,  49577103,"southern",   "south",15.90, 80.00,"derived_ap"),
- ("AR","Arunachal Pradesh","State",       2,   1383727,"nec",         "rest", 28.00, 94.50,"prs"),
- ("AS","Assam","State",                  14,  31205576,"nec",         "rest", 26.20, 92.80,"prs"),
+ ("AR","Arunachal Pradesh","State",       2,   1383727,"nec",         "northeast", 28.00, 94.50,"prs"),
+ ("AS","Assam","State",                  14,  31205576,"nec",         "northeast", 26.20, 92.80,"prs"),
  ("BR","Bihar","State",                  40, 104099452,"eastern",    "hindi",25.60, 85.50,"prs"),
- ("CH","Chandigarh","UT",                 1,   1055450,"northern",    "rest", 30.74, 76.79,"prs"),
+ ("CH","Chandigarh","UT",                 1,   1055450,"northern",    "north", 30.74, 76.79,"prs"),
  ("CT","Chhattisgarh","State",           11,  25545198,"central",    "hindi",21.30, 82.00,"prs"),
- ("DH","Dadra & Nagar Haveli and Daman & Diu","UT",2,586956,"western","rest", 20.30, 72.95,"derived_dh"),
+ ("DH","Dadra & Nagar Haveli and Daman & Diu","UT",2,586956,"western","west", 20.30, 72.95,"derived_dh"),
  ("DL","NCT of Delhi","UT",               7,  16787941,"northern",   "hindi",28.65, 77.15,"prs"),
- ("GA","Goa","State",                     2,   1458545,"western",     "rest", 15.40, 74.00,"prs"),
- ("GJ","Gujarat","State",                26,  60439692,"western",     "rest", 22.50, 71.50,"prs"),
+ ("GA","Goa","State",                     2,   1458545,"western",     "west", 15.40, 74.00,"prs"),
+ ("GJ","Gujarat","State",                26,  60439692,"western",     "west", 22.50, 71.50,"prs"),
  ("HR","Haryana","State",                10,  25351462,"northern",   "hindi",29.20, 76.30,"prs"),
  ("HP","Himachal Pradesh","State",        4,   6864602,"northern",   "hindi",31.80, 77.30,"prs"),
- ("JK","Jammu & Kashmir","UT",            5,  12267013,"northern",    "rest", 33.50, 75.30,"derived_jk"),
+ ("JK","Jammu & Kashmir","UT",            5,  12267013,"northern",    "north", 33.50, 75.30,"derived_jk"),
  ("JH","Jharkhand","State",              14,  32988134,"eastern",    "hindi",23.70, 85.50,"prs"),
  ("KA","Karnataka","State",              28,  61095297,"southern",   "south",14.80, 76.00,"prs"),
  ("KL","Kerala","State",                 20,  33406061,"southern",   "south",10.50, 76.40,"prs"),
- ("LA","Ladakh","UT",                     1,    274289,"northern",    "rest", 34.20, 77.60,"derived_la"),
- ("LD","Lakshadweep","UT",                1,     64473,"none",        "rest", 10.60, 72.60,"prs"),
+ ("LA","Ladakh","UT",                     1,    274289,"northern",    "north", 34.20, 77.60,"derived_la"),
+ ("LD","Lakshadweep","UT",                1,     64473,"none",        "south", 10.60, 72.60,"prs"),
  ("MP","Madhya Pradesh","State",         29,  72626809,"central",    "hindi",23.50, 78.50,"prs"),
- ("MH","Maharashtra","State",            48, 112374333,"western",     "rest", 19.40, 76.00,"prs"),
- ("MN","Manipur","State",                 2,   2855794,"nec",         "rest", 24.70, 93.90,"prs"),
- ("ML","Meghalaya","State",               2,   2966889,"nec",         "rest", 25.50, 91.30,"prs"),
- ("MZ","Mizoram","State",                 1,   1097206,"nec",         "rest", 23.30, 92.80,"prs"),
- ("NL","Nagaland","State",                1,   1978502,"nec",         "rest", 26.10, 94.40,"prs"),
- ("OD","Odisha","State",                 21,  41974218,"eastern",     "rest", 20.50, 84.50,"prs"),
+ ("MH","Maharashtra","State",            48, 112374333,"western",     "west", 19.40, 76.00,"prs"),
+ ("MN","Manipur","State",                 2,   2855794,"nec",         "northeast", 24.70, 93.90,"prs"),
+ ("ML","Meghalaya","State",               2,   2966889,"nec",         "northeast", 25.50, 91.30,"prs"),
+ ("MZ","Mizoram","State",                 1,   1097206,"nec",         "northeast", 23.30, 92.80,"prs"),
+ ("NL","Nagaland","State",                1,   1978502,"nec",         "northeast", 26.10, 94.40,"prs"),
+ ("OD","Odisha","State",                 21,  41974218,"eastern",     "east", 20.50, 84.50,"prs"),
  ("PY","Puducherry","UT",                 1,   1247953,"southern",   "south",11.93, 79.83,"prs"),
- ("PB","Punjab","State",                 13,  27743338,"northern",    "rest", 31.00, 75.40,"prs"),
+ ("PB","Punjab","State",                 13,  27743338,"northern",    "north", 31.00, 75.40,"prs"),
  ("RJ","Rajasthan","State",              25,  68548437,"northern",   "hindi",26.80, 73.80,"prs"),
- ("SK","Sikkim","State",                  1,    610577,"nec",         "rest", 27.60, 88.50,"prs"),
+ ("SK","Sikkim","State",                  1,    610577,"nec",         "northeast", 27.60, 88.50,"prs"),
  ("TN","Tamil Nadu","State",             39,  72147030,"southern",   "south",11.00, 78.50,"prs"),
  ("TS","Telangana","State",              17,  35003674,"southern",   "south",17.90, 79.00,"derived_ts"),
- ("TR","Tripura","State",                 2,   3673917,"nec",         "rest", 23.80, 91.70,"prs"),
+ ("TR","Tripura","State",                 2,   3673917,"nec",         "northeast", 23.80, 91.70,"prs"),
  ("UP","Uttar Pradesh","State",          80, 199812341,"central",    "hindi",27.00, 80.80,"prs"),
  ("UK","Uttarakhand","State",             5,  10086292,"central",    "hindi",30.10, 79.20,"prs"),
- ("WB","West Bengal","State",            42,  91276115,"eastern",     "rest", 23.80, 87.80,"prs"),
+ ("WB","West Bengal","State",            42,  91276115,"eastern",     "east", 23.80, 87.80,"prs"),
 ]
 
 SOURCE_NOTES = {
@@ -371,7 +371,7 @@ doc = {
 os.makedirs("data", exist_ok=True)
 with open("data/units.json","w") as f: json.dump(doc,f,indent=2,ensure_ascii=False)
 print(f"OK. {len(units)} units, {tot_seats} seats, population {tot_pop:,}")
-for g in ("south","hindi","rest"):
+for g in ("south","west","north","hindi","east","northeast"):
     s = sum(u["current_seats"] for u in units if u["analytical_group"]==g)
     print(f"  {g:6s} {s:3d} seats  {s/tot_seats*100:5.1f}%")
 
@@ -395,7 +395,7 @@ if HIST or PROJ:
     print("\nShare of national population by analytical group (NOT official).")
     print("Years with an absent unit are marked *, and exclude it from both numerator and denominator.")
     print("  group  " + "".join(f"{y.replace('_proj',''):>9}" for y in ALL))
-    for g in ("south","hindi","rest"):
+    for g in ("south","west","north","hindi","east","northeast"):
         row = f"  {g:6s} "
         for y in ALL:
             have = [u for u in units if u["population"][y] is not None]

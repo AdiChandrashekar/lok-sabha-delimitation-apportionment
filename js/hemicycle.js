@@ -69,11 +69,11 @@ export function layout(n, { innerRatio = 0.46, padAngle = 0.035 } = {}) {
 
 /* Assemble the blocs in the order they should appear across the chamber, and
    hand back both the seat list and a legend. */
-export function buildBlocs(rows, mode, palette) {
+export function buildBlocs(rows, mode, palette, groupOrder = []) {
   const key = mode === "zonal" ? "zone" : "group";
   const ORDER = mode === "zonal"
     ? ["southern", "western", "central", "northern", "eastern", "nec", "none"]
-    : ["south", "rest", "hindi"];
+    : groupOrder;
 
   const buckets = new Map();
   for (const r of rows) {

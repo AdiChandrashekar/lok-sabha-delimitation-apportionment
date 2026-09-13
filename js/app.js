@@ -6,7 +6,7 @@
 --------------------------------------------------------------------------- */
 import { allocate, METHODS, quotaViolations } from "./apportion.js";
 import { loadAll, buildRows, groupTotals, fmt,
-         YEAR_LABELS, YEAR_NOTES, GROUP_LABELS, ZONE_LABELS, BLOC_COLOURS } from "./data.js";
+         YEAR_LABELS, YEAR_NOTES, GROUP_LABELS, GROUP_ORDER, ZONE_LABELS, BLOC_COLOURS } from "./data.js";
 import { createMap, renderLegend, MODES } from "./map.js";
 import { renderBlocks } from "./blocks.js";
 import { renderShares, renderMembership, renderVoteWeight, renderTable, toCSV } from "./panels.js";
@@ -24,22 +24,24 @@ const DEFAULTS = {
   bloc: "group",
 };
 
-/* Presets encode arguments, so each carries a caption saying what it shows. */
+/* Presets encode arguments, so each carries a caption saying what it shows.
+   Ordered by political weight: where things stand, the proposal that was
+   voted on, the compromise offered in that debate, and what waiting costs,
+   followed by the assurance and the ceiling the new building was built for.
+   Every figure in a caption is checked against the engine. */
 const PRESETS = [
   { id: "today", label: "The House Today", state: { house: 543, method: "hare", year: "2011" },
     caption: "543 seats allocated in proportion to the 2011 Census. This is what the freeze is holding back: the south loses 17 seats, the Hindi-belt gains 23." },
-  { id: "freeze", label: "The Freeze, as a Constraint", state: { house: 543, method: "hare", year: "2011", maxChange: 0 },
-    caption: "Cap every state at zero change and you reproduce the current house exactly. The freeze is not a population rule at all — it is a rule about not moving." },
   { id: "bill2026", label: "The 2026 Bill", state: { house: 815, method: "hare", year: "2011" },
     caption: "815 seats from the states, the figure in the Constitution (131st Amendment) Bill, 2026, allocated proportionally on 2011 population. The bill was negatived on 17 April 2026." },
   { id: "shah", label: "The Uniform +50% Offer", state: { house: 815, method: "statusQuo", year: "2011" },
     caption: "Every state's seats scaled up by the same proportion, the arrangement reported to have been offered during the April debate. Nobody's share moves at all — which is exactly why it resolves nothing about representation." },
-  { id: "nobody", label: "Nobody Loses", state: { house: 815, method: "hare", year: "2011", protectAll: true },
-    caption: "Grow the house to 815 and forbid any state from losing a seat. It is feasible — but only because the house grows by half. Try it at 543 and nothing moves at all." },
-  { id: "phased", label: "A Phased Transition", state: { house: 600, method: "hare", year: "2011", maxChange: 2 },
-    caption: "Cap every state at two seats of movement. The south ends up with MORE seats than it holds today. The cap, not the house size, is what does the protecting." },
   { id: "y2036", label: "On 2036 Projections", state: { house: 543, method: "hare", year: "2036_proj" },
-    caption: "The same rule on the official 2036 projection. The southern loss roughly doubles, from 17 seats to 30. Every published projection quotes the 2011 figure." },
+    caption: "The same rule on the official 2036 projection. The southern loss roughly doubles, from 17 seats to 30, and the east loses 11. Every published projection quotes the 2011 figure." },
+  { id: "nobody", label: "Nobody Loses", state: { house: 815, method: "hare", year: "2011", protectAll: true },
+    caption: "Grow the house to 815 and forbid any state from losing a seat — the assurance offered to the south. It is feasible, but only because the house grows by half, and the south's share still falls from 24.1% to 20.7%. Try it at 543 and nothing moves at all." },
+  { id: "chamber888", label: "Fill the New Chamber", state: { house: 888, method: "hare", year: "2011" },
+    caption: "The Lok Sabha chamber in the new Parliament building seats 888. Fill it on 2011 population and Uttar Pradesh alone goes from 80 seats to 146, and the Hindi-belt holds 410 of the 888. Even at this size, Arunachal Pradesh, Goa, and Dadra & Nagar Haveli and Daman & Diu each lose a seat." },
 ];
 
 let D = null, state = { ...DEFAULTS }, mapApi = null, hovered = null, lastRows = [];
@@ -198,7 +200,7 @@ function labelFor(id) {
 }
 
 function renderChamber(rows) {
-  const blocs = buildBlocs(rows, state.bloc, BLOC_COLOURS)
+  const blocs = buildBlocs(rows, state.bloc, BLOC_COLOURS, GROUP_ORDER)
     .map(b => ({ ...b, label: labelFor(b.id) }));
   const total = blocs.reduce((a, b) => a + b.seats, 0);
 

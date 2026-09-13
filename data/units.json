@@ -95,7 +95,7 @@
         "2036_proj": 414000
       },
       "zonal_council": "none",
-      "analytical_group": "rest",
+      "analytical_group": "east",
       "label_point": {
         "lat": 12.5586,
         "lon": 92.842,
@@ -147,7 +147,7 @@
         "2036_proj": 1719000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 28.4601,
         "lon": 94.7071,
@@ -173,7 +173,7 @@
         "2036_proj": 39399000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 26.2017,
         "lon": 92.9944,
@@ -225,7 +225,7 @@
         "2036_proj": 1360000
       },
       "zonal_council": "northern",
-      "analytical_group": "rest",
+      "analytical_group": "north",
       "label_point": {
         "lat": 30.7237,
         "lon": 76.7685,
@@ -277,7 +277,7 @@
         "2036_proj": 3670000
       },
       "zonal_council": "western",
-      "analytical_group": "rest",
+      "analytical_group": "west",
       "label_point": {
         "lat": 20.2292,
         "lon": 73.0506,
@@ -329,7 +329,7 @@
         "2036_proj": 1663000
       },
       "zonal_council": "western",
-      "analytical_group": "rest",
+      "analytical_group": "west",
       "label_point": {
         "lat": 15.3307,
         "lon": 74.0936,
@@ -355,7 +355,7 @@
         "2036_proj": 81316000
       },
       "zonal_council": "western",
-      "analytical_group": "rest",
+      "analytical_group": "west",
       "label_point": {
         "lat": 23.4001,
         "lon": 71.8919,
@@ -433,7 +433,7 @@
         "2036_proj": 14747000
       },
       "zonal_council": "northern",
-      "analytical_group": "rest",
+      "analytical_group": "north",
       "label_point": {
         "lat": 33.7339,
         "lon": 74.5911,
@@ -537,7 +537,7 @@
         "2036_proj": 316000
       },
       "zonal_council": "northern",
-      "analytical_group": "rest",
+      "analytical_group": "north",
       "label_point": {
         "lat": 34.216,
         "lon": 77.5828,
@@ -563,7 +563,7 @@
         "2036_proj": 72000
       },
       "zonal_council": "none",
-      "analytical_group": "rest",
+      "analytical_group": "south",
       "label_point": {
         "lat": 8.2693,
         "lon": 73.0413,
@@ -615,7 +615,7 @@
         "2036_proj": 136764000
       },
       "zonal_council": "western",
-      "analytical_group": "rest",
+      "analytical_group": "west",
       "label_point": {
         "lat": 19.3628,
         "lon": 75.2871,
@@ -641,7 +641,7 @@
         "2036_proj": 3549000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 24.614,
         "lon": 93.7778,
@@ -667,7 +667,7 @@
         "2036_proj": 3687000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 25.5676,
         "lon": 90.4453,
@@ -693,7 +693,7 @@
         "2036_proj": 1363000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 23.5857,
         "lon": 92.8542,
@@ -719,7 +719,7 @@
         "2036_proj": 2458000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 26.0681,
         "lon": 94.5756,
@@ -745,7 +745,7 @@
         "2036_proj": 45025000
       },
       "zonal_council": "eastern",
-      "analytical_group": "rest",
+      "analytical_group": "east",
       "label_point": {
         "lat": 20.768,
         "lon": 84.648,
@@ -797,7 +797,7 @@
         "2036_proj": 32658000
       },
       "zonal_council": "northern",
-      "analytical_group": "rest",
+      "analytical_group": "north",
       "label_point": {
         "lat": 30.7062,
         "lon": 75.5295,
@@ -849,7 +849,7 @@
         "2036_proj": 758000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 27.4986,
         "lon": 88.4315,
@@ -927,7 +927,7 @@
         "2036_proj": 4565000
       },
       "zonal_council": "nec",
-      "analytical_group": "rest",
+      "analytical_group": "northeast",
       "label_point": {
         "lat": 23.7354,
         "lon": 91.5634,
@@ -1005,7 +1005,7 @@
         "2036_proj": 102931000
       },
       "zonal_council": "eastern",
-      "analytical_group": "rest",
+      "analytical_group": "east",
       "label_point": {
         "lat": 23.0944,
         "lon": 87.7056,
