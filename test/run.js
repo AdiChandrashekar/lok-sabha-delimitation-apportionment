@@ -23,10 +23,14 @@ const ok = (name, cond, detail = "") => {
 };
 const section = s => console.log(`\n${s}`);
 const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
+/* Methods bound by the exact-total guarantee. The Delimitation Commission
+   method is applied literally and reports its own total, so it has its own
+   section (16) instead of these loops. */
+const EXACT = Object.keys(METHODS).filter(m => METHODS[m].exactTotal !== false);
 
 /* 1. exact totals across the full house-size range, every method */
 section("1. Allocations sum exactly to the house size");
-for (const m of Object.keys(METHODS)) {
+for (const m of EXACT) {
   let bad = 0;
   for (let H = 400; H <= 1100; H += 1) {
     const r = allocate(units, H, m, { baseSeats: 2 });
@@ -60,7 +64,7 @@ for (const [code, want] of Object.entries(a.huntington_at_815)) {
 
 /* 4. constraints */
 section("4. Floors are respected under every method");
-for (const m of Object.keys(METHODS)) {
+for (const m of EXACT) {
   const r = allocate(units, 815, m, { baseSeats: 2, protectAll: true });
   const bad = units.filter(u => r.seats[u.code] < u.current_seats).map(u => u.code);
   ok(`${m} protectAll@815`, bad.length === 0, bad.join(","));
@@ -172,7 +176,7 @@ section("10. Every population series allocates exactly and respects the floor");
 for (const year of SERIES) {
   const expectedAbsent = units.filter(u => u.population[year] == null).map(u => u.code).sort();
   let bad = 0, badFloor = 0, badAbsent = 0;
-  for (const m of Object.keys(METHODS)) {
+  for (const m of EXACT) {
     for (const H of [400, 543, 700, 815, 888, 1100]) {
       const r = allocate(units, H, m, { baseSeats: 2, year });
       if (r.infeasible || sum(r.seats) !== H) { bad++; continue; }
@@ -209,7 +213,7 @@ section("12. Maximum-change-per-unit constraint");
    band and quietly summed to 594 instead of 600. */
 for (const K of [0, 1, 2, 3, 5, 10, 25]) {
   let band = 0, inexact = [], threw = 0;
-  for (const m of Object.keys(METHODS)) {
+  for (const m of EXACT) {
     for (let H = 450; H <= 900; H += 7) {
       let r;
       try { r = allocate(units, H, m, { baseSeats: 2, maxChange: K }); }
@@ -232,7 +236,7 @@ for (const K of [0, 1, 2, 3, 5, 10, 25]) {
 /* Constraints combined, which is where the locking has least room to work. */
 {
   let bad = [];
-  for (const m of Object.keys(METHODS)) {
+  for (const m of EXACT) {
     for (const H of [543, 560, 600, 700, 815, 900]) {
       for (const o of [{ protectAll: true }, { protectSmall: true },
                        { protectAll: true, maxChange: 12 }, { protectSmall: true, maxChange: 4 }]) {
@@ -486,6 +490,65 @@ section("15. Boundary geometry: joins to the unit list and satisfies the section
     ok("the cartographic note names its source and caveat",
        Boolean(topo.source?.repository && topo.source?.provenance_caveat));
   }
+}
+
+/* ---------------------------------------------------------------------------
+   16. The Delimitation Commission method, applied literally.
+
+   Today's seats are the 1976 allocation, frozen, with later state splits
+   dividing a parent's seats among its successors. Re-merging the successors
+   gives the fifteen "major" states of 1971, which shared 507 seats, so the
+   procedure can be checked against what the Commission actually did.
+--------------------------------------------------------------------------- */
+section("16. Delimitation Commission method (1976), applied literally");
+{
+  const U = Object.fromEntries(units.map(u => [u.code, u]));
+  const MERGE = {
+    AP: ["AP", "TS"], BR: ["BR", "JH"], MP: ["MP", "CT"], UP: ["UP", "UK"],
+    AS: ["AS"], GJ: ["GJ"], HR: ["HR"], KA: ["KA"], KL: ["KL"], MH: ["MH"],
+    OD: ["OD"], PB: ["PB"], RJ: ["RJ"], TN: ["TN"], WB: ["WB"],
+  };
+  const states71 = Object.entries(MERGE).map(([code, parts]) => ({
+    code, type: "State",
+    current_seats: parts.reduce((a, c) => a + U[c].current_seats, 0),
+    population: { "1971": parts.reduce((a, c) => a + U[c].population["1971"], 0) },
+  }));
+  ok("the fifteen major states of 1971 held 507 seats", sum(Object.fromEntries(states71.map(s => [s.code, s.current_seats]))) === 507);
+
+  const r76 = allocate(states71, 507, "commission", { year: "1971" });
+  const misses = states71.filter(s => r76.seats[s.code] !== s.current_seats).map(s => `${s.code} ${r76.seats[s.code]} vs ${s.current_seats}`);
+  ok("reproduces the 1976 allocation of all fifteen major states from the 1971 Census",
+     misses.length === 0 && r76.total === 507, misses.join(", "));
+  ok("  and so does the published quotient of 10,44,000 with nearest rounding",
+     states71.every(s => Math.round(s.population["1971"] / 1044000) === s.current_seats));
+
+  const r815 = allocate(units, 815, "commission", {});
+  const aside = units.filter(u => u.type === "UT" || u.population["2011"] <= 6000000);
+  ok("union territories and states of 60 lakh or fewer keep their current seats",
+     aside.every(u => r815.seats[u.code] === u.current_seats));
+  ok("the literal total is reported rather than forced: 816 at a house of 815",
+     r815.total === 816 && sum(r815.seats) === 816 && r815.exact === false, `total ${r815.total}`);
+  ok("  and at 543 on the 2011 Census it adds up exactly",
+     allocate(units, 543, "commission", {}).exact === true);
+
+  let shrink = 0;
+  let prev = allocate(units, 543, "commission", {}).seats;
+  for (let H = 544; H <= 1100; H++) {
+    const cur = allocate(units, H, "commission", {}).seats;
+    if (units.some(u => cur[u.code] < prev[u.code])) shrink++;
+    prev = cur;
+  }
+  ok("never takes a seat away from a state when the house grows", shrink === 0, `${shrink} house sizes`);
+
+  const r81 = allocate(units, 543, "commission", { year: "1981" });
+  ok("reports Assam absent in 1981 and does not seat it",
+     r81.absent.join(",") === "AS" && !("AS" in r81.seats), r81.absent.join(","));
+
+  const x = allocate(units, 815, "commission", {}).seats;
+  const y = allocate([...units].reverse(), 815, "commission", {}).seats;
+  ok("does not depend on input order", units.every(u => x[u.code] === y[u.code]));
+  ok("flags constraints it does not apply",
+     allocate(units, 700, "commission", { protectAll: true }).constraintsIgnored === true);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

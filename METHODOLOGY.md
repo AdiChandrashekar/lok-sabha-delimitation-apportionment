@@ -9,7 +9,9 @@ Where something is uncertain it is marked as uncertain rather than smoothed over
 
 Given a population figure for each of 36 units, a house size *H*, an allocation
 rule and a set of constraints, produce a whole number of seats for every unit
-summing **exactly** to *H*.
+summing **exactly** to *H*. The one deliberate exception is the Delimitation
+Commission method, which is applied literally and can miss *H* by a few seats
+(§3).
 
 Exactness is not decorative. Published projection tables usually do not sum to
 their own stated total: the PRS annexure this tool validates against totals 548
@@ -38,13 +40,67 @@ rather than letting the data grant a rounding favour that the law does not.
 
 | Rule | Mechanism | Size bias |
 |---|---|---|
+| **Delimitation Commission method (1976)** | Union territories and states of 60 lakh or fewer keep their current seats. The rest share the remaining seats: one national quotient (their population ÷ those seats), and each state's population ÷ that quotient, rounded to the nearest seat. The quotient is not adjusted afterwards. | Neutral among the larger states. **Its total is not guaranteed to equal the house size**, and is shown as computed. The interface default. |
 | **Largest remainder, Hare quota** | Quota is total population over house size. Each unit takes the floor of its exact entitlement; leftover seats go to the largest fractional remainders. | Essentially neutral. Never violates quota. Can exhibit the Alabama paradox. |
 | **Huntington-Hill** | Every unit seeded with one seat, then each further seat to the highest population divided by √(n(n+1)). Used for the US House. | Mildly favours small units. |
-| **Sainte-Laguë (Webster)** | Divisors 1, 3, 5, 7. | Least size-biased of the divisor methods. |
+| **Sainte-Laguë (Webster)** | Divisors 1, 3, 5, 7; equivalently, one quotient for every unit, adjusted until the rounded seats add up exactly. | Least size-biased of the divisor methods. Reproduces the 1976 allocation, but is **not** the Delimitation Commission's procedure (see below). |
 | **D'Hondt (Jefferson)** | Divisors 1, 2, 3, 4. | Systematically favours large units. |
 | **Cube root of population** | Largest remainder applied to the cube root of population. | Compresses hard: a unit four times larger gets about 1.6 times the seats. |
 | **Base plus proportional** | A guaranteed base per unit, remainder distributed proportionally. The Cambridge Compromise shape used for the European Parliament. | Set by the base. A larger base protects small units at the direct expense of large ones. |
 | **Uniform scaling** | Seats in proportion to each state's *current* allocation. | **Not an apportionment rule.** Included because it is the shape of the uniform increase offered during the April 2026 debate, and because seeing that it moves nobody's share is more convincing than being told so. |
+
+### The Delimitation Commission method, and the default
+
+India's allocation is not computed by any formula today: it is the allocation
+made on the 1971 Census and frozen in 1976. The last time a formula was applied,
+the Third Delimitation Commission (1972–76) worked as follows:
+
+1. It set aside seats for the union territories and for states of six million
+   people or fewer, which the proviso to Article 81 exempts from the population
+   ratio.
+2. It divided the remaining population by the remaining seats.
+3. It rounded the result to a national quotient of 10,44,000 people per seat.
+4. It divided each state's population by that quotient to find its seats.
+
+People per seat ended up ranging only from 10.31 lakh in Rajasthan to 10.67 lakh
+in Kerala. Sources: The India Forum, and the Centre for Policy Studies (August
+2026).
+
+**Checked against what the Commission actually did.** Today's seats are that
+allocation, frozen, with later state splits dividing a parent's seats among its
+successors. Re-merging the successors gives the fifteen states above 60 lakh in
+1971, which held 507 seats. Dividing their 1971 Census populations (Table A-02,
+recast to 2011 jurisdiction) by 10,44,000 and rounding to the nearest seat
+reproduces all fifteen exactly, for a total of 507. Rounding always up or always
+down does not, and neither does D'Hondt. The test suite asserts this (§16).
+
+**Why this is not Sainte-Laguë.** Sainte-Laguë, largest remainder and
+Huntington-Hill *also* reproduce all fifteen, because no state's fraction fell
+near the rounding line, so the 1976 figures cannot distinguish them. The
+procedure itself differs from Sainte-Laguë in two ways that matter today:
+
+- **The quotient was fixed, not tuned.** Sainte-Laguë adjusts its divisor until
+  the rounded seats add up exactly. The Commission applied one quotient once.
+  Applied to today's data with the same set-aside, a fixed quotient with nearest
+  rounding adds up at only 126 of the 358 house sizes from 543 to 900 on the
+  2011 Census (missing by at most 3 seats), and at 81 of 358 on the 2026
+  projection (at most 4). At a house of 815 on 2011 it produces 816.
+- **Not every unit is on the quotient.** Union territories and small states keep
+  set-aside seats. At 815, Sainte-Laguë over every unit gives Delhi 11 seats and
+  Jammu & Kashmir 8; the Commission's procedure keeps them at 7 and 5.
+
+**How the tool applies it.** Literally. Union territories and states at or below
+the threshold keep their current seats; the rest are rounded to the nearest seat
+against one quotient; and the total is shown as computed, with a notice when it
+misses the house size. The record does not say how the Commission would have
+settled a miss, and adjusting it silently would attribute a choice to the
+Commission that it never made. This is the one method exempt from the exact-total
+guarantee in §1. The other constraints do not apply to it, since it carries its
+own small-state rule.
+
+The defeated 2026 bills specified no allocation formula; the uniform increase
+reportedly offered during the debate was pro-rata scaling of current seats.
+Carnegie's May 2026 analysis uses Sainte-Laguë (Webster) explicitly.
 
 ### A change from the first implementation
 
@@ -114,6 +170,12 @@ Largest remainder can take a seat away from a state when the house **grows**.
 This is a known defect of the method — see Balinski and Young, *Fair
 Representation* — and it happens on this data inside the politically relevant
 range.
+
+**It is not a defect of India's own method.** Under the Delimitation
+Commission's procedure a larger house only lowers the quotient, so no state's
+rounded figure can fall, and the divisor methods cannot produce it either.
+The finding matters for projections and analysis built on largest remainder,
+not for a Delimitation Commission working the way the last one did.
 
 Across house sizes 543 to 900 on the 2011 series there are **32** instances.
 Uttarakhand falls from 5 to 4 at a house of 548, and 548 is itself the total of

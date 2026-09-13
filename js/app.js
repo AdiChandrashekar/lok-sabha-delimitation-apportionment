@@ -14,8 +14,11 @@ import { layout, buildBlocs, render as drawChamber } from "./hemicycle.js";
 
 const $ = id => document.getElementById(id);
 
+/* The default is the procedure India's last Delimitation Commission actually
+   used, applied literally, rather than a textbook rule. Its own rule for small
+   states and union territories is built in, so the separate exemption is off. */
 const DEFAULTS = {
-  house: 543, method: "hare", year: "2011", base: 2,
+  house: 543, method: "commission", year: "2011", base: 2,
   protectAll: false, protectSmall: false, threshold: 6000000,
   maxChange: null,
   /* Vote weight is the default map view. Seat counts are the mechanism, but
@@ -25,23 +28,27 @@ const DEFAULTS = {
 };
 
 /* Presets encode arguments, so each carries a caption saying what it shows.
-   Ordered by political weight: where things stand, the proposal that was
-   voted on, the compromise offered in that debate, and what waiting costs,
-   followed by the assurance and the ceiling the new building was built for.
-   Every figure in a caption is checked against the engine. */
+   Every population-based preset uses the last Delimitation Commission's own
+   procedure, applied literally (the default). Ordered by relevance: the house
+   as it stands, what unfreezing it means, the proposal that was voted on, the
+   compromise offered in that debate, what waiting costs, the smallest house in
+   which nobody loses, and the ceiling the new building was built for. Every
+   figure in a caption is checked against the engine. */
 const PRESETS = [
-  { id: "today", label: "The House Today", state: { house: 543, method: "hare", year: "2011" },
-    caption: "543 seats allocated in proportion to the 2011 Census. This is what the freeze is holding back: the south loses 17 seats, the Hindi-belt gains 23." },
-  { id: "bill2026", label: "The 2026 Bill", state: { house: 815, method: "hare", year: "2011" },
-    caption: "815 seats from the states, the figure in the Constitution (131st Amendment) Bill, 2026, allocated proportionally on 2011 population. The bill was negatived on 17 April 2026." },
+  { id: "today", label: "The House Today", state: { house: 543, method: "statusQuo", year: "2011" },
+    caption: "The 543 seats as they stand: allocated on the 1971 Census and frozen since 1976. On 2011 population the most under-represented large state has 1.64 times as many people per MP as the most over-represented, and a Kerala vote carries 1.50 times the weight of an Uttar Pradesh vote." },
+  { id: "unfreeze", label: "Unfreeze at 543", state: { house: 543, method: "commission", year: "2011" },
+    caption: "Keep 543 seats and allocate them the way the last Delimitation Commission did, on the 2011 Census: union territories and small states keep their seats, and the rest are rounded against one national quotient. The south falls from 131 seats to 113 and the Hindi-belt rises from 225 to 247; Tamil Nadu loses 7 and Kerala 5. The gap in people per MP shrinks from 1.64 to 1.06." },
+  { id: "bill2026", label: "The 2026 Bill", state: { house: 815, method: "commission", year: "2011" },
+    caption: "815 seats, the figure in the Constitution (131st Amendment) Bill, 2026, allocated by the Commission's method on 2011 population. The procedure produces 816, not 815, because a fixed quotient rounded state by state does not always add up. No state loses a seat, but the south's share falls from 24.1% to 21.1% while the Hindi-belt's rises to 46.0%. The bill was negatived on 17 April 2026." },
   { id: "shah", label: "The Uniform +50% Offer", state: { house: 815, method: "statusQuo", year: "2011" },
-    caption: "Every state's seats scaled up by the same proportion, the arrangement reported to have been offered during the April debate. Nobody's share moves at all — which is exactly why it resolves nothing about representation." },
-  { id: "y2036", label: "On 2036 Projections", state: { house: 543, method: "hare", year: "2036_proj" },
-    caption: "The same rule on the official 2036 projection. The southern loss roughly doubles, from 17 seats to 30, and the east loses 11. Every published projection quotes the 2011 figure." },
-  { id: "nobody", label: "Nobody Loses", state: { house: 815, method: "hare", year: "2011", protectAll: true },
-    caption: "Grow the house to 815 and forbid any state from losing a seat — the assurance offered to the south. It is feasible, but only because the house grows by half, and the south's share still falls from 24.1% to 20.7%. Try it at 543 and nothing moves at all." },
-  { id: "chamber888", label: "Fill the New Chamber", state: { house: 888, method: "hare", year: "2011" },
-    caption: "The Lok Sabha chamber in the new Parliament building seats 888. Fill it on 2011 population and Uttar Pradesh alone goes from 80 seats to 146, and the Hindi-belt holds 410 of the 888. Even at this size, Arunachal Pradesh, Goa, and Dadra & Nagar Haveli and Daman & Diu each lose a seat." },
+    caption: "Every state's seats scaled up by the same proportion, the arrangement reported to have been offered during the April debate. Every state's share stays essentially where it is, and so does the gap in people per MP: 1.62, against 1.64 today. It grows the house and corrects nothing." },
+  { id: "y2036", label: "On 2036 Projections", state: { house: 543, method: "commission", year: "2036_proj" },
+    caption: "The Commission's method at 543 seats on the official 2036 projection. The south loses 30 seats, against 18 on the 2011 Census, and the east loses 11; Tamil Nadu alone loses 11. Most published projections quote the 2011 figure." },
+  { id: "hold767", label: "Nobody Loses: 767 Seats", state: { house: 767, method: "commission", year: "2026_proj" },
+    caption: "The smallest house in which the Commission's method takes no seat from any state, on the 2026 projection, the nearest series to today; at 766 Kerala loses one. Even with nobody losing, the south's share falls from 24.1% to 19.7% and the Hindi-belt's rises to 48.0%. Carnegie's estimate of about 775 uses Sainte-Laguë over every unit instead." },
+  { id: "chamber888", label: "Fill the New Chamber", state: { house: 888, method: "commission", year: "2011" },
+    caption: "The Lok Sabha chamber in the new Parliament building seats 888. Fill it by the Commission's method on 2011 population and Uttar Pradesh goes from 80 seats to 147, and the Hindi-belt holds 408 of the 888. No state loses a seat, but the south's share still falls to 21.2%." },
 ];
 
 let D = null, state = { ...DEFAULTS }, mapApi = null, hovered = null, lastRows = [];
@@ -56,7 +63,8 @@ function readURL() {
     year: q.get("y") && YEAR_LABELS[q.get("y")] ? q.get("y") : DEFAULTS.year,
     base: Math.min(10, Math.max(0, Math.round(num("b", DEFAULTS.base)))),
     protectAll: q.get("pa") === "1",
-    protectSmall: q.get("ps") === "1",
+    /* On by default, so the link has to be able to say "off" as well as "on". */
+    protectSmall: q.has("ps") ? q.get("ps") === "1" : DEFAULTS.protectSmall,
     threshold: Math.max(0, Math.round(num("st", DEFAULTS.threshold))),
     maxChange: q.has("mc") ? Math.max(0, Math.round(num("mc", 5))) : null,
     view: MODES[q.get("v")] ? q.get("v") : DEFAULTS.view,
@@ -71,7 +79,8 @@ function writeURL(replace = true) {
   if (state.year !== DEFAULTS.year) q.set("y", state.year);
   if (state.method === "baseProp" && state.base !== DEFAULTS.base) q.set("b", state.base);
   if (state.protectAll) q.set("pa", "1");
-  if (state.protectSmall) { q.set("ps", "1"); if (state.threshold !== DEFAULTS.threshold) q.set("st", state.threshold); }
+  if (state.protectSmall !== DEFAULTS.protectSmall) q.set("ps", state.protectSmall ? "1" : "0");
+  if (state.protectSmall && state.threshold !== DEFAULTS.threshold) q.set("st", state.threshold);
   if (state.maxChange != null) q.set("mc", state.maxChange);
   if (state.view !== DEFAULTS.view) q.set("v", state.view);
   if (state.bloc !== DEFAULTS.bloc) q.set("bl", state.bloc);
@@ -93,7 +102,13 @@ function syncControls() {
   if (state.maxChange != null) $("maxChange").value = state.maxChange;
 
   $("base-field").hidden = state.method !== "baseProp";
-  $("threshold-row").hidden = !state.protectSmall;
+  /* The Commission method carries its own small-state and union-territory
+     rule and cannot take the others, so those controls are disabled for it,
+     while the threshold it uses stays visible and adjustable. */
+  const direct = Boolean(METHODS[state.method].direct);
+  for (const id of ["protectAll", "protectSmall", "useMaxChange", "maxChange"]) $(id).disabled = direct;
+  $("constraints-note").hidden = !direct;
+  $("threshold-row").hidden = !(state.protectSmall || direct);
   $("maxchange-row").hidden = state.maxChange == null;
 
   $("method-note").textContent = METHODS[state.method].note;
@@ -117,7 +132,10 @@ function syncControls() {
 
   const active = PRESETS.find(p => matchesPreset(p));
   document.querySelectorAll(".preset").forEach(b =>
-    b.classList.toggle("is-on", active && b.dataset.id === active.id));
+    /* Force a real boolean. With no matching preset, `active && …` is
+       undefined, and classList.toggle(name, undefined) FLIPS the class instead
+       of clearing it, which lit up presets that did not match. */
+    b.classList.toggle("is-on", active?.id === b.dataset.id));
   $("preset-caption").textContent = active ? active.caption : "";
 }
 
@@ -154,6 +172,21 @@ function renderAlerts(result) {
     }[result.reason] ?? "This combination cannot be satisfied.";
     bits.push(`<div class="alert is-error"><strong>No allocation satisfies these settings</strong>
       ${why} ${fixes.join(" ")}</div>`);
+  }
+
+  if (!result.infeasible && result.exact === false) {
+    const gap = result.total - state.house;
+    bits.push(`<div class="alert"><strong>The Commission's procedure gives ${result.total} seats, not ${state.house}</strong>
+      One national quotient, with each state rounded to the nearest seat, does not always add up to the
+      house size: here it comes out ${Math.abs(gap)} seat${Math.abs(gap) === 1 ? "" : "s"} ${gap > 0 ? "over" : "short"}.
+      In 1976 it happened to add up exactly. The Commission's record does not say how it would have
+      settled a difference, so the result is shown as the procedure produces it rather than adjusted,
+      and every share on this page is of the ${result.total} seats it actually allocates.</div>`);
+  }
+  if (!result.infeasible && result.constraintsIgnored) {
+    bits.push(`<div class="alert"><strong>Constraints are not applied to the Commission method</strong>
+      It has its own rule: union territories and states of 60 lakh or fewer keep their current seats.
+      "No state loses a seat" and the cap on change apply to the other methods.</div>`);
   }
 
   if (result.absent?.length) {
@@ -324,12 +357,15 @@ function renderParadox() {
     }
     prev = cur;
   }
+  /* Always computed for largest remainder, whatever rule is selected, because
+     the point is what that rule would do. India's method cannot do this. */
   $("paradox-summary").innerHTML = hits.length
-    ? `On the <b>${YEAR_LABELS[state.year]}</b> series, largest remainder produces
+    ? `On the <b>${YEAR_LABELS[state.year]}</b> series, largest remainder would produce
        <b>${hits.length}</b> instances between a house of 543 and 900 where a state
-       <em>loses</em> a seat as the house grows. Each pill below is one instance:
-       the house size, the state, and the fall.`
-    : `On the ${YEAR_LABELS[state.year]} series there are no instances between 543 and 900.`;
+       <em>loses</em> a seat as the house grows. The Delimitation Commission method
+       produces none. Each pill below is one instance: the house size, the state,
+       and the fall.`
+    : `On the ${YEAR_LABELS[state.year]} series largest remainder produces no instances between 543 and 900.`;
   $("paradox-list").innerHTML = `<div class="paradox-list">${
     hits.map(h => `<span class="pill">${h.H}: ${h.code} ${h.from}&rarr;${h.to}</span>`).join("")}</div>`;
 }

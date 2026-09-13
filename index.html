@@ -123,6 +123,10 @@
 
     <fieldset class="constraints">
       <legend>Constraints</legend>
+      <p class="hint" id="constraints-note" hidden>
+        The Delimitation Commission method has its own rule: union territories and states of
+        60 lakh or fewer keep their current seats. The constraints below apply to the other methods.
+      </p>
 
       <label class="check">
         <input type="checkbox" id="protectAll">
@@ -136,16 +140,17 @@
       <label class="check">
         <input type="checkbox" id="protectSmall">
         <span>
-          <strong>Small states do not lose seats</strong>
-          <em>The exception assumed in the published projections, which applied it by hand
-              to Arunachal Pradesh, Goa, Manipur and Meghalaya.</em>
+          <strong>Small states keep their seats</strong>
+          <em>Article 81 exempts states of 60 lakh people or fewer from the population ratio.
+              Built into the Delimitation Commission method; tick this to apply the same
+              exemption to the other rules.</em>
         </span>
       </label>
 
       <div class="check check-sub" id="threshold-row" hidden>
         <label for="threshold">Threshold</label>
         <input type="number" id="threshold" min="0" max="50000000" step="100000" value="6000000">
-        <span class="hint">people. 60 lakh is the published assumption.</span>
+        <span class="hint">people. 60 lakh is the Article 81 threshold.</span>
       </div>
 
       <label class="check">
@@ -286,7 +291,9 @@
     <p>
       It takes a population figure for each of India's 36 states and union territories,
       a house size, an allocation rule and any constraints, and returns a whole number of
-      seats for every unit that sums <em>exactly</em> to the house size you set. Published
+      seats for every unit that sums <em>exactly</em> to the house size you set, with one deliberate
+      exception: the Delimitation Commission method is applied the way the Commission worked, and its
+      total can miss by a few seats, which the page flags when it happens. Published
       projection tables usually do not sum exactly, because each state is rounded
       independently. The PRS annexure this tool is validated against totals 548 and 813
       where it should total 543 and 815, for that reason and because a small-state
@@ -298,11 +305,13 @@
 
     <h3>The Alabama Paradox</h3>
     <p>
-      Largest remainder — the rule behind essentially every published delimitation
-      projection — can take a seat away from a state when the house <em>grows</em>. This is
-      not a rounding curiosity; it is a known defect of the method, set out in Balinski and
-      Young's <cite>Fair Representation</cite>, and it happens on this data inside the
-      politically relevant range.
+      The Delimitation Commission's method — one national quotient, each state rounded to
+      the nearest seat — can never take a seat away from a state when the house grows, because a
+      bigger house only lowers the quotient. Largest remainder can. It is a
+      common way to build quick projections, and the defect is well documented in Balinski and
+      Young's <cite>Fair Representation</cite>, so the list below shows what largest remainder
+      would do on this data: numbers a projection built that way could show, but a Commission
+      applying India's method would not produce.
     </p>
     <p id="paradox-summary"></p>
     <div id="paradox-list"></div>

@@ -109,6 +109,8 @@ Published column totals are 548 and 813, not 543 and 815, because PRS rounds
 each state independently and applies a small-state exception by hand to
 Arunachal Pradesh, Goa, Manipur and Meghalaya. **Our allocations always sum
 exactly to the house size**, and the difference is explained rather than hidden.
+The one exception is the Delimitation Commission method, which is applied as the
+Commission worked and flagged when its total misses.
 
 Splitting Andhra Pradesh from Telangana and Jammu & Kashmir from Ladakh moves
 exactly one other unit: West Bengal goes from 40 to 41 at 543 seats, through
@@ -141,8 +143,13 @@ house to 543 and switch on "no state loses a seat" and zero units move. At the
 current size, protecting every state's absolute count is arithmetically
 identical to keeping the freeze. That is the trap the debate walks into.
 
-**Largest remainder — the rule behind every published projection — exhibits the
-Alabama paradox on this data.** Across house sizes 543 to 900 there are **32**
+**Largest remainder, a common way to build projections, exhibits the Alabama
+paradox on this data. India's own method does not.** The interface defaults to
+the last Delimitation Commission's own procedure, applied literally: union
+territories and states of 60 lakh or fewer keep their seats, and the rest are
+rounded to the nearest seat against one national quotient. It reproduces the
+1976 allocation exactly from the 1971 Census. It is not Sainte-Laguë, and its
+total can miss the house size by a few seats, which the page flags. Across house sizes 543 to 900 there are **32**
 instances of a state *losing* a seat as the house *grows*. Uttarakhand falls
 from 5 to 4 at a house of 548, which is itself the total of the published
 unchanged-strength column. The divisor methods produce none. Re-derived

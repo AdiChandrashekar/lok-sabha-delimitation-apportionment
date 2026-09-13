@@ -3,6 +3,8 @@
 
    Every method takes (units, houseSize, opts) where each unit is
    { code, weight } and returns { code: seats } summing EXACTLY to houseSize.
+   The one deliberate exception is the Delimitation Commission method, which is
+   applied as the Commission worked and reports its own total (see METHODS).
 
    Validated against the published projection table: at 543 seats under
    largest-remainder this reproduces UP 89, BR 46, RJ 30, TN 32, KL 15 on merged
@@ -42,11 +44,11 @@ export function highestAverages(units, houseSize, divisor, seedOne) {
   return seats;
 }
 
-/* Largest remainder with a Hare quota. This is the rule behind essentially
-   every published delimitation projection, and it is also the only method here
-   that can exhibit the Alabama paradox: a unit can LOSE a seat when the house
-   grows. See Balinski and Young, Fair Representation. Worth surfacing in the
-   methodology note, because nobody in the Indian debate raises it. */
+/* Largest remainder with a Hare quota. A common way to build quick
+   projections, though not the method India's Delimitation Commission used.
+   It is also the family here that can
+   exhibit the Alabama paradox: a unit can LOSE a seat when the house grows. See
+   Balinski and Young, Fair Representation. */
 export function largestRemainder(units, houseSize) {
   const totalWeight = units.reduce((s, u) => s + u.weight, 0);
   const quota = totalWeight / houseSize;
@@ -128,58 +130,116 @@ export function baseProportional(units, houseSize, base) {
   return seats;
 }
 
+/* Ordered by relevance to India, which is the order the interface lists them
+   in. Only the order and the wording matter to the interface; the engine does
+   not depend on either. */
 export const METHODS = {
+  /* The Third Delimitation Commission's procedure (1972-76), applied literally.
+     Union territories and states of 60 lakh or fewer keep their current seats
+     outside the formula. The larger states share what is left: one national
+     quotient (their population divided by those seats), and each state's
+     population divided by it, rounded to the nearest seat.
+
+     The quotient is NOT tuned afterwards, so the total can miss the house size
+     by a few seats. That is deliberate. In 1976 the rounded seats happened to
+     total exactly the 507 available, and the Commission's record does not say
+     how it would have reconciled a miss, so inventing a reconciliation would put
+     words in its mouth. The miss is returned as `total` and the interface says
+     so. It is also why this is not Sainte-Laguë: Sainte-Laguë is this rounding
+     with the quotient tuned until the total comes out, over every unit.
+
+     Handled in allocate() directly rather than through run(), because the
+     locking and repair machinery exists to force an exact total. */
+  commission: {
+    label: "Delimitation Commission method (1976)",
+    note: "How the last Delimitation Commission allocated seats. Union territories and states of 60 lakh or fewer keep their current seats. The larger states share the rest: divide their population by those seats to get one national quotient, then round each state's population divided by that quotient to the nearest seat. Applied literally, so the total can miss the house size by a few seats, and the page says so when it does.",
+    quotaRespecting: false,
+    exactTotal: false,
+    direct: true,
+  },
+  /* Not an apportionment rule, and labelled as such wherever it appears. It
+     allocates in proportion to the CURRENT seat count rather than to
+     population, so every state keeps its present share and the house simply
+     grows. At 543 this is the freeze itself. Above 543 it is the arrangement
+     reported to have been offered during the April 2026 debate, included so a
+     reader can see what it does rather than take a description on trust. */
+  statusQuo: {
+    label: "Today's seats, scaled uniformly (not a population rule)",
+    note: "Every state keeps its current share and the house simply grows. At 543 this is the freeze that has held since 1976. At 815 it is the uniform 50% increase reportedly offered during the April 2026 debate.",
+    quotaRespecting: false,
+    populationIndependent: true,
+    run: (u, H) => largestRemainder(u.map(x => ({ code: x.code, weight: x.current })), H)
+  },
+  sainteLague: {
+    label: "Sainte-Laguë (Webster)",
+    note: "Divisors 1, 3, 5, 7: equivalently, one quotient for every unit, adjusted until the rounded seats add up exactly. The least size-biased divisor method, and the one Carnegie uses in its analysis of India. It reproduces the 1976 allocation, but it is not the Delimitation Commission's procedure: the Commission never adjusted its quotient, and union territories and small states were not on it.",
+    quotaRespecting: false,
+    run: (u, H) => highestAverages(u, H, n => 2 * n + 1, false)
+  },
   hare: {
-    label: "Proportional, largest remainder",
-    note: "Seats in direct proportion to population, leftovers to the largest fractional remainders. The rule behind most published projections. Can exhibit the Alabama paradox.",
+    label: "Largest remainder (Hamilton)",
+    note: "Round every state down, then give the leftover seats to the largest fractions. A common way to build quick projections, but not the method India has used. Unlike India's method, it can take a seat away from a state when the house grows.",
     quotaRespecting: true,
     run: (u, H) => largestRemainder(u, H)
   },
   huntington: {
-    label: "Huntington-Hill (US method)",
-    note: "Every unit seeded with one seat, then each further seat to the highest population divided by the geometric mean of current and next seat count. Mildly favours small units.",
+    label: "Huntington-Hill (US House)",
+    note: "Rounds at the geometric mean of consecutive seat counts, which mildly favours small states. The method used for the United States House of Representatives.",
     quotaRespecting: false,
     run: (u, H) => highestAverages(u, H, n => Math.sqrt(n * (n + 1)), true)
   },
-  sainteLague: {
-    label: "Sainte-Lague",
-    note: "Divisors 1, 3, 5, 7. Least size-biased of the divisor methods.",
+  baseProp: {
+    label: "Base seats plus proportional",
+    note: "A guaranteed base per state, with the rest shared by population. Floor-plus-proportional compromises of this shape have been suggested for India, and the European Parliament's Cambridge Compromise takes the same form.",
     quotaRespecting: false,
-    run: (u, H) => highestAverages(u, H, n => 2 * n + 1, false)
+    run: (u, H, o) => baseProportional(u, H, o.baseSeats ?? 2)
   },
   dhondt: {
-    label: "D'Hondt",
-    note: "Divisors 1, 2, 3, 4. Systematically favours large units, so the most populous states gain most.",
+    label: "D'Hondt (Jefferson)",
+    note: "Divisors 1, 2, 3, 4. Favours large states. Used to allocate seats among parties in many list-PR systems, not to allocate seats among Indian states.",
     quotaRespecting: false,
     run: (u, H) => highestAverages(u, H, n => n + 1, false)
   },
   cubeRoot: {
     label: "Cube root of population",
-    note: "Seats proportional to the cube root of population. Compresses the range sharply: a unit four times larger gets about 1.6 times the seats.",
+    note: "Seats proportional to the cube root of population, which strongly favours small states: one four times larger gets about 1.6 times the seats. Not proposed for India; included as the far end of the range.",
     quotaRespecting: true,
     run: (u, H) => largestRemainder(u.map(x => ({ code: x.code, weight: Math.cbrt(x.weight) })), H)
   },
-  baseProp: {
-    label: "Base seats plus proportional",
-    note: "A guaranteed base per unit, remainder proportional. The Cambridge Compromise shape used for the European Parliament.",
-    quotaRespecting: false,
-    run: (u, H, o) => baseProportional(u, H, o.baseSeats ?? 2)
-  },
-  /* Not an apportionment rule, and labelled as such wherever it appears. It
-     allocates in proportion to the CURRENT seat count rather than to
-     population, so every state keeps its present share and the house simply
-     grows. That is the arrangement reported to have been offered during the
-     April 2026 debate, and it is included so a reader can see what it does
-     rather than take a description of it on trust: at any house size the
-     regional shares do not move at all. */
-  statusQuo: {
-    label: "Uniform scaling of the current house",
-    note: "Not an apportionment rule. Seats in proportion to each state's CURRENT allocation, so every state keeps its present share and the house just grows. This is the shape of the uniform increase offered during the April 2026 debate.",
-    quotaRespecting: false,
-    populationIndependent: true,
-    run: (u, H) => largestRemainder(u.map(x => ({ code: x.code, weight: x.current })), H)
-  }
 };
+
+/* The Delimitation Commission method, applied literally. See its METHODS
+   entry for why the total is not forced. `pop` has already excluded absent
+   units. States at or below the threshold ("does not exceed six millions" in
+   Article 81) and every union territory keep their current seats; the rest are
+   rounded against one quotient. Set-aside units are reported as floors, so the
+   quota panel can say they were pinned by rule rather than by the method. */
+function commissionAllocate(active, absent, houseSize, pop, opts) {
+  const threshold = opts.smallThreshold ?? 6000000;
+  const aside = active.filter(u => u.type === "UT" || pop(u) <= threshold);
+  const pool = active.filter(u => !aside.includes(u));
+  const asideSeats = aside.reduce((a, u) => a + u.current_seats, 0);
+  const poolSeats = houseSize - asideSeats;
+
+  const floors = {};
+  for (const u of aside) floors[u.code] = u.current_seats;
+  for (const u of pool) floors[u.code] = 1;
+  const constraintsIgnored = Boolean(opts.protectAll) || Number.isFinite(opts.maxChange);
+  const common = { absent, floors, ceilings: null, maximumHouse: null, constraintsIgnored,
+                   setAside: aside.map(u => u.code) };
+
+  if (pool.length === 0 || poolSeats < pool.length) {
+    return { infeasible: true, reason: "floors-exceed-house", seats: null,
+             minimumHouse: asideSeats + pool.length, ...common };
+  }
+  const quotient = pool.reduce((a, u) => a + pop(u), 0) / poolSeats;
+  const seats = {};
+  for (const u of aside) seats[u.code] = u.current_seats;
+  for (const u of pool) seats[u.code] = Math.max(1, Math.round(pop(u) / quotient));
+  const total = Object.values(seats).reduce((a, b) => a + b, 0);
+  return { infeasible: false, reason: null, seats, minimumHouse: asideSeats + pool.length,
+           total, exact: total === houseSize, quotient, ...common };
+}
 
 /* ---------------------------------------------------------------------------
    Constraints, enforced by locking. Run the method, lock any unit outside its
@@ -209,6 +269,8 @@ export function allocate(units, houseSize, methodKey, opts = {}) {
              floors: {}, ceilings: null, minimumHouse: null, maximumHouse: null };
   }
   const pop = u => rawPop(u);
+
+  if (method.direct) return commissionAllocate(active, absent, houseSize, pop, opts);
 
   /* Floors. The one-seat minimum always applies; the optional constraints only
      ever raise it. A max-change constraint also lowers nothing below one. */

@@ -70,9 +70,9 @@
     <p class="doc-kicker">Reference</p>
     <h1>The Rules, Explained</h1>
     <p class="doc-lede">
-      Six ways of turning populations into whole numbers of seats, why they
-      disagree, and why the one every published projection uses can take a seat
-      away from a state when the house gets bigger.
+      Six ways of turning populations into whole numbers of seats, which one
+      India has actually used, why they disagree, and why a popular alternative
+      can take a seat away from a state when the house gets bigger.
     </p>
 
     <!-- ------------------------------------------------------------- -->
@@ -120,8 +120,8 @@
         <h4>Quota Methods</h4>
         <p>
           Compute the exact entitlements, round them all down, then hand out the
-          leftover seats by some rule. <em>Largest remainder</em> is the only one
-          in common use. Satisfies quota by construction. Suffers paradoxes.
+          leftover seats by some rule. <em>Largest remainder</em> is the best
+          known. Satisfies quota by construction. Suffers paradoxes.
         </p>
       </div>
       <div class="doc-col">
@@ -139,8 +139,9 @@
     <h2 id="hamilton">3. Largest Remainder (Hamilton's Method, Hare Quota)</h2>
 
     <p>
-      The rule behind essentially every published delimitation projection,
-      including the PRS table this site validates against.
+      The most familiar way to build a quick projection. It is <strong>not</strong>
+      the method India's Delimitation Commission used (see §4), but it is worth
+      understanding because projections built this way circulate widely.
     </p>
     <ol class="doc-steps">
       <li>Work out the <em>quota</em>: total population ÷ house size. This is how many people one seat "costs".</li>
@@ -198,6 +199,39 @@
       rounds to 4. This makes it <strong>the least biased of the divisor
       methods</strong> by most measures, and it is the usual recommendation of
       people who study the problem for a living.
+    </p>
+    <p class="doc-callout">
+      <strong>India's method is close to Sainte-Laguë, but it is not the
+      same.</strong> The Third Delimitation Commission (1972–76) set aside seats
+      for the union territories and for states of six million people or fewer,
+      which Article 81 exempts from the population ratio. It divided the rest of
+      the population by the remaining seats, rounded the result to a national
+      quotient of <strong>10,44,000 people per seat</strong>, and divided each
+      state's population by that quotient to find its seats. People per seat
+      ranged only from 10.31 lakh in Rajasthan to 10.67 lakh in Kerala.
+    </p>
+    <p>
+      Two things separate this from Sainte-Laguë. <strong>The quotient was fixed,
+      not tuned.</strong> Sainte-Laguë keeps adjusting its divisor until the
+      rounded seats add up exactly. The Commission applied one quotient once, and
+      in 1976 the rounded seats happened to total the 507 available. Applied to
+      today's populations the same procedure often misses: at a house of 815 on
+      the 2011 Census it produces 816 seats. <strong>And not every unit was on
+      the quotient.</strong> Union territories and small states kept seats set
+      outside it. Delhi, with 1.68 crore people in 2011, would therefore stay at
+      7 seats however large the house grew, where Sainte-Laguë over every unit
+      gives it 11 at 815.
+    </p>
+    <p class="doc-fine">
+      Sources: <a href="https://www.theindiaforum.in/politics/indias-delimitation-dilemma-challenges-and-consequences">The India Forum</a>
+      and the <a href="https://blog.cpsindia.org/2026/08/delimitation-in-midst-of-demographic.html">Centre for Policy Studies</a>.
+      Neither records how individual states' fractions were rounded. Rounding to
+      the nearest seat against 10,44,000 reproduces the 1976 seats of all fifteen
+      major states exactly from the 1971 Census (as recast to today's boundaries).
+      So do Sainte-Laguë, largest remainder and Huntington-Hill, because no
+      state's fraction fell near the rounding line, which means the 1976 figures
+      cannot tell those rules apart. The main page's default is the Commission's
+      procedure applied literally, with its total shown as computed.
     </p>
 
     <h3 id="huntington">Huntington-Hill</h3>
@@ -326,14 +360,22 @@
       <strong>C drops to 1.</strong> The house grew by a seat and C lost one.
     </p>
 
-    <h3>It Is Not a Historical Curiosity</h3>
+    <h3>What It Means for India</h3>
     <p>
-      On India's 2011 Census, running largest remainder across house sizes from
-      543 to 900 produces <strong>32 instances</strong> of a state losing a seat
-      as the house grows. Uttarakhand falls from 5 seats to 4 at a house of
-      <strong>548</strong> — and 548 is itself the total of the published
-      unchanged-strength column in the PRS annexure. Odisha falls from 21 to 20
-      at 595.
+      India's own method is immune. With one national quotient and each state
+      rounded to the nearest seat, a larger house only lowers the quotient, so no
+      state's figure can fall. A Delimitation Commission working the way the last
+      one did cannot take a seat from a state by enlarging the house.
+    </p>
+    <p>
+      The risk sits in the analysis around it. Largest remainder is a common way
+      to build projections, and on India's 2011 Census it produces
+      <strong>32 instances</strong> of a state losing a seat as the house grows
+      between 543 and 900. Uttarakhand falls from 5 seats to 4 at a house of
+      <strong>548</strong>, the total of the unchanged-strength column in the PRS
+      annexure, and back to 5 at 549. Odisha falls from 21 to 20 at 595. A
+      projection built that way can show a loss that India's method would never
+      produce.
     </p>
     <p>
       <a href="index.html#methodology">The main page lists every instance</a>,
@@ -421,32 +463,33 @@
     <h2 id="india">9. What This Means for the Indian Debate</h2>
 
     <p>
-      Almost every published treatment of delimitation reports one rule's output
-      as though it were <em>the</em> number of seats each state would get. It is
-      not. It is largest remainder's answer, and largest remainder is a choice
-      with known, documented defects that nobody in the debate appears to have
-      raised.
+      Published treatments of delimitation usually report one set of numbers as
+      though it were <em>the</em> number of seats each state would get. Each
+      rests on choices that are rarely spelled out: the census year, the house
+      size, the exemptions, and the rounding rule.
     </p>
     <p>
       Three consequences worth carrying into any argument about this:
     </p>
     <ol class="doc-steps">
       <li>
-        <strong>The rule is worth dozens of seats.</strong> Switch between
-        methods on the main page at a fixed house size and watch large states
-        move by several seats each. The rule is not a technical detail beneath
-        the politics; it is one of the politics.
+        <strong>The rounding rule matters less than the frame around it.</strong>
+        Among the textbook proportional methods no state moves by more than a
+        seat. What moves dozens of seats is whether to allocate by population at
+        all, which census counts, how big the house is, and which states and
+        territories sit outside the formula.
       </li>
       <li>
-        <strong>The published figure sits on a paradox.</strong> 548 — the total
-        of the unchanged-strength column — is a house size at which largest
-        remainder takes a seat away from Uttarakhand that it holds at 547.
+        <strong>India's method avoids a trap that projections can fall
+        into.</strong> Largest remainder takes a seat from Uttarakhand at a house
+        of 548, the total of the PRS unchanged-strength column, though it holds
+        that seat at 547 and 549. The national quotient method never does this.
       </li>
       <li>
         <strong>Constraints decide more than rules do.</strong> Cap every state
-        at two seats of movement and the south ends up with more seats than it
-        holds today, whichever rule you pick. The argument about method may
-        matter less than the argument about transition.
+        at two seats of movement at a house of 600 and the south ends up with
+        more seats than it holds today. The argument about method may matter
+        less than the argument about transition.
       </li>
     </ol>
 
