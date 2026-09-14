@@ -20,6 +20,9 @@ const $ = id => document.getElementById(id);
 const DEFAULTS = {
   house: 543, method: "commission", year: "2011", base: 2,
   protectAll: false, protectSmall: false, threshold: 6000000,
+  /* Seats pooled for union territories under the Commission method. Null keeps
+     each union territory's current seats, as in 1976. */
+  utSeats: null,
   maxChange: null,
   /* Vote weight is the default map view. Seat counts are the mechanism, but
      what a vote is worth is the thing the mechanism is for. */
@@ -39,8 +42,8 @@ const PRESETS = [
     caption: "The 543 seats as they stand: allocated on the 1971 Census and frozen since 1976. On 2011 population the most under-represented large state has 1.64 times as many people per MP as the most over-represented, and a Kerala vote carries 1.50 times the weight of an Uttar Pradesh vote." },
   { id: "unfreeze", label: "Unfreeze at 543", state: { house: 543, method: "commission", year: "2011" },
     caption: "Keep 543 seats and allocate them the way the last Delimitation Commission did, on the 2011 Census: union territories and small states keep their seats, and the rest are rounded against one national quotient. The south falls from 131 seats to 113 and the Hindi-belt rises from 225 to 247; Tamil Nadu loses 7 and Kerala 5. The gap in people per MP shrinks from 1.64 to 1.06." },
-  { id: "bill2026", label: "The 2026 Bill", state: { house: 815, method: "commission", year: "2011" },
-    caption: "815 seats, the figure in the Constitution (131st Amendment) Bill, 2026, allocated by the Commission's method on 2011 population. The procedure produces 816, not 815, because a fixed quotient rounded state by state does not always add up. No state loses a seat, but the south's share falls from 24.1% to 21.1% while the Hindi-belt's rises to 46.0%. The bill was negatived on 17 April 2026." },
+  { id: "bill2026", label: "The 2026 Bill", state: { house: 850, method: "commission", year: "2011", utSeats: 35 },
+    caption: "The Constitution (131st Amendment) Bill, 2026 would have raised the ceiling to 850: up to 815 seats for states and up to 35 for union territories. The states' 815 is allocated here by the Commission's method on 2011 population, which produces 816, and the union territories share 35 by population (Delhi 16, Jammu & Kashmir 12). No state or territory loses a seat, but the south's share falls from 24.1% to 20.6% while the Hindi-belt's rises to 46.2%. The bill was negatived on 17 April 2026." },
   { id: "shah", label: "The Uniform +50% Offer", state: { house: 815, method: "statusQuo", year: "2011" },
     caption: "Every state's seats scaled up by the same proportion, the arrangement reported to have been offered during the April debate. Every state's share stays essentially where it is, and so does the gap in people per MP: 1.62, against 1.64 today. It grows the house and corrects nothing." },
   { id: "y2036", label: "On 2036 Projections", state: { house: 543, method: "commission", year: "2036_proj" },
@@ -67,6 +70,7 @@ function readURL() {
     protectSmall: q.has("ps") ? q.get("ps") === "1" : DEFAULTS.protectSmall,
     threshold: Math.max(0, Math.round(num("st", DEFAULTS.threshold))),
     maxChange: q.has("mc") ? Math.max(0, Math.round(num("mc", 5))) : null,
+    utSeats: q.has("ut") ? Math.max(0, Math.round(num("ut", 35))) : null,
     view: MODES[q.get("v")] ? q.get("v") : DEFAULTS.view,
     bloc: q.get("bl") === "zonal" ? "zonal" : DEFAULTS.bloc,
   };
@@ -82,6 +86,7 @@ function writeURL(replace = true) {
   if (state.protectSmall !== DEFAULTS.protectSmall) q.set("ps", state.protectSmall ? "1" : "0");
   if (state.protectSmall && state.threshold !== DEFAULTS.threshold) q.set("st", state.threshold);
   if (state.maxChange != null) q.set("mc", state.maxChange);
+  if (state.utSeats != null) q.set("ut", state.utSeats);
   if (state.view !== DEFAULTS.view) q.set("v", state.view);
   if (state.bloc !== DEFAULTS.bloc) q.set("bl", state.bloc);
   history[replace ? "replaceState" : "pushState"](null, "",
@@ -102,6 +107,8 @@ function syncControls() {
   if (state.maxChange != null) $("maxChange").value = state.maxChange;
 
   $("base-field").hidden = state.method !== "baseProp";
+  $("ut-field").hidden = !METHODS[state.method].direct;
+  if (document.activeElement !== $("utSeats")) $("utSeats").value = state.utSeats ?? "";
   /* The Commission method carries its own small-state and union-territory
      rule and cannot take the others, so those controls are disabled for it,
      while the threshold it uses stays visible and adjustable. */
@@ -141,7 +148,7 @@ function syncControls() {
 
 function matchesPreset(p) {
   const want = { ...DEFAULTS, ...p.state };
-  return ["house", "method", "year", "protectAll", "protectSmall", "maxChange"]
+  return ["house", "method", "year", "protectAll", "protectSmall", "maxChange", "utSeats"]
     .every(k => state[k] === want[k]);
 }
 
@@ -169,16 +176,26 @@ function renderAlerts(result) {
       "did-not-converge": `The constraint solver failed to settle. This is a bug in the tool, not a
         property of your request. Please report it.`,
       "no-population": `No unit has a population figure for this series.`,
+      "ut-pool-below-current": `The union territories hold <b>${result.utMinimum}</b> seats today, and none may fall
+        below its current seats, so the pool cannot be smaller than that. You have set <b>${state.utSeats}</b>.`,
     }[result.reason] ?? "This combination cannot be satisfied.";
     bits.push(`<div class="alert is-error"><strong>No allocation satisfies these settings</strong>
       ${why} ${fixes.join(" ")}</div>`);
   }
 
+  if (!result.infeasible && result.utSeats != null) {
+    bits.push(`<div class="alert"><strong>Union territories share ${result.utSeats} seats; the states share the rest</strong>
+      The union territories' ${result.utSeats} are divided among them by population (Sainte-Laguë), with none
+      below its current seats. That rule is this tool's: the 2026 bill capped union territories at 35 seats
+      but set no rule for dividing them, and the 1976 Commission never allocated them by population.</div>`);
+  }
   if (!result.infeasible && result.exact === false) {
     const gap = result.total - state.house;
+    const statesNote = result.utSeats != null
+      ? ` The states receive ${result.statesTotal} rather than ${state.house - result.utSeats}.` : "";
     bits.push(`<div class="alert"><strong>The Commission's procedure gives ${result.total} seats, not ${state.house}</strong>
       One national quotient, with each state rounded to the nearest seat, does not always add up to the
-      house size: here it comes out ${Math.abs(gap)} seat${Math.abs(gap) === 1 ? "" : "s"} ${gap > 0 ? "over" : "short"}.
+      house size: here it comes out ${Math.abs(gap)} seat${Math.abs(gap) === 1 ? "" : "s"} ${gap > 0 ? "over" : "short"}.${statesNote}
       In 1976 it happened to add up exactly. The Commission's record does not say how it would have
       settled a difference, so the result is shown as the procedure produces it rather than adjusted,
       and every share on this page is of the ${result.total} seats it actually allocates.</div>`);
@@ -391,6 +408,7 @@ function apply(pushHistory = false) {
     smallThreshold: state.threshold,
   };
   if (state.maxChange != null) opts.maxChange = state.maxChange;
+  if (state.utSeats != null) opts.utSeats = state.utSeats;
 
   const result = allocate(D.units, state.house, state.method, opts);
   syncControls();
@@ -431,6 +449,10 @@ function wire() {
   $("method").addEventListener("change", e => set("method", e.target.value));
   $("year").addEventListener("change", e => set("year", e.target.value));
   $("base").addEventListener("input", e => set("base", Math.max(0, Math.min(10, Number(e.target.value) || 0))));
+  $("utSeats").addEventListener("input", e => {
+    const v = e.target.value.trim();
+    set("utSeats", v === "" ? null : Math.max(0, Math.min(100, Math.round(Number(v)) || 0)));
+  });
   $("protectAll").addEventListener("change", e => set("protectAll", e.target.checked));
   $("protectSmall").addEventListener("change", e => set("protectSmall", e.target.checked));
   $("threshold").addEventListener("input", e => set("threshold", Math.max(0, Number(e.target.value) || 0)));

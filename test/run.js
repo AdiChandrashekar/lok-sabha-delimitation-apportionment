@@ -549,6 +549,19 @@ section("16. Delimitation Commission method (1976), applied literally");
   ok("does not depend on input order", units.every(u => x[u.code] === y[u.code]));
   ok("flags constraints it does not apply",
      allocate(units, 700, "commission", { protectAll: true }).constraintsIgnored === true);
+
+  /* The 2026 bill's shape: an 850 ceiling, up to 35 of it for union territories. */
+  const r850 = allocate(units, 850, "commission", { utSeats: 35 });
+  const utUnits = units.filter(u => u.type === "UT");
+  const utGot = utUnits.reduce((a, u) => a + r850.seats[u.code], 0);
+  ok("a union-territory pool of 35 at 850 gives the union territories exactly 35",
+     utGot === 35 && r850.utTotal === 35, `${utGot}`);
+  ok("  with none below its current seats", utUnits.every(u => r850.seats[u.code] >= u.current_seats));
+  ok("  while the states' 815 is still allocated literally, coming out at 816",
+     r850.statesTotal === 816 && r850.total === 851, `states ${r850.statesTotal}, total ${r850.total}`);
+  const tooSmallPool = allocate(units, 850, "commission", { utSeats: 10 });
+  ok("a pool smaller than the union territories' current seats is refused, not truncated",
+     tooSmallPool.infeasible === true && tooSmallPool.reason === "ut-pool-below-current", `${tooSmallPool.reason}`);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

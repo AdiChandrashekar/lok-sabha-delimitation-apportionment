@@ -216,29 +216,50 @@ export const METHODS = {
    quota panel can say they were pinned by rule rather than by the method. */
 function commissionAllocate(active, absent, houseSize, pop, opts) {
   const threshold = opts.smallThreshold ?? 6000000;
-  const aside = active.filter(u => u.type === "UT" || pop(u) <= threshold);
-  const pool = active.filter(u => !aside.includes(u));
+  /* A union-territory pool. Left unset, union territories keep today's seats,
+     as in 1976. Set (as for the 2026 bill's 35), the union territories share
+     exactly that many seats among themselves, and the states share the rest by
+     the Commission's procedure. The bill set the pool but no rule for dividing
+     it, so the rule here is ours and the interface says so: Sainte-Laguë by
+     population, with no union territory below its current seats. That split is
+     forced to add up, because it is our rule rather than the Commission's; the
+     states' part is still applied literally. */
+  const utPool = Number.isFinite(opts.utSeats) ? Math.max(0, Math.floor(opts.utSeats)) : null;
+  const uts = active.filter(u => u.type === "UT");
+  const aside = active.filter(u => (u.type === "UT" ? utPool === null : pop(u) <= threshold));
+  const pool = active.filter(u => u.type !== "UT" && !aside.includes(u));
   const asideSeats = aside.reduce((a, u) => a + u.current_seats, 0);
-  const poolSeats = houseSize - asideSeats;
+  const poolSeats = houseSize - asideSeats - (utPool ?? 0);
 
   const floors = {};
   for (const u of aside) floors[u.code] = u.current_seats;
   for (const u of pool) floors[u.code] = 1;
+  if (utPool !== null) for (const u of uts) floors[u.code] = u.current_seats;
   const constraintsIgnored = Boolean(opts.protectAll) || Number.isFinite(opts.maxChange);
   const common = { absent, floors, ceilings: null, maximumHouse: null, constraintsIgnored,
-                   setAside: aside.map(u => u.code) };
+                   setAside: aside.map(u => u.code), utSeats: utPool };
 
+  let utAlloc = {};
+  if (utPool !== null && uts.length) {
+    const r = allocate(uts, utPool, "sainteLague", { year: opts.year, protectAll: true });
+    if (r.infeasible) {
+      return { infeasible: true, reason: "ut-pool-below-current", seats: null,
+               minimumHouse: null, utMinimum: uts.reduce((a, u) => a + u.current_seats, 0), ...common };
+    }
+    utAlloc = r.seats;
+  }
   if (pool.length === 0 || poolSeats < pool.length) {
     return { infeasible: true, reason: "floors-exceed-house", seats: null,
-             minimumHouse: asideSeats + pool.length, ...common };
+             minimumHouse: asideSeats + pool.length + (utPool ?? 0), ...common };
   }
   const quotient = pool.reduce((a, u) => a + pop(u), 0) / poolSeats;
-  const seats = {};
+  const seats = { ...utAlloc };
   for (const u of aside) seats[u.code] = u.current_seats;
   for (const u of pool) seats[u.code] = Math.max(1, Math.round(pop(u) / quotient));
   const total = Object.values(seats).reduce((a, b) => a + b, 0);
-  return { infeasible: false, reason: null, seats, minimumHouse: asideSeats + pool.length,
-           total, exact: total === houseSize, quotient, ...common };
+  const utTotal = uts.reduce((a, u) => a + (seats[u.code] ?? 0), 0);
+  return { infeasible: false, reason: null, seats, minimumHouse: asideSeats + pool.length + (utPool ?? 0),
+           total, exact: total === houseSize, quotient, utTotal, statesTotal: total - utTotal, ...common };
 }
 
 /* ---------------------------------------------------------------------------
